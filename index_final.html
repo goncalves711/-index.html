@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Meu App Pessoal</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg-page:#f5f5f3;--bg-card:#fff;--bg-secondary:#f0f0ee;
+  --text-primary:#1a1a1a;--text-secondary:#666;--border:#e0e0dd;
+  --green-mid:#639922;--blue-mid:#378ADD;--amber-text:#854F0B;--purple-text:#534AB7;
+}
+body.dark{
+  --bg-page:#111;--bg-card:#1e1e1e;--bg-secondary:#2a2a2a;
+  --text-primary:#f0f0ee;--text-secondary:#aaa;--border:#333;
+}
+body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg-page);color:var(--text-primary);min-height:100vh;transition:background .2s,color .2s}
+
+.header{padding:2rem 1.25rem 1rem;position:relative}
+.header h1{font-size:26px;font-weight:500}
+.header p{font-size:15px;color:var(--text-secondary);margin-top:4px}
+.theme-btn{position:absolute;top:1.5rem;right:1.25rem;background:var(--bg-card);border:0.5px solid var(--border);border-radius:8px;width:36px;height:36px;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:0 1.25rem 2rem}
+.card{background:var(--bg-card);border:0.5px solid var(--border);border-radius:16px;padding:1.25rem 1rem;text-decoration:none;color:var(--text-primary);display:flex;flex-direction:column;gap:4px;transition:transform .15s}
+.card:active{transform:scale(0.97)}
+.card.g{border-top:3px solid var(--green-mid)}
+.card.b{border-top:3px solid var(--blue-mid)}
+.card.p{border-top:3px solid var(--purple-text)}
+.card.a{border-top:3px solid var(--amber-text)}
+.icon{font-size:28px}
+.label{font-size:16px;font-weight:500;margin-top:6px}
+.desc{font-size:12px;color:var(--text-secondary)}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Olá 👋</h1>
+  <p>O que vamos fazer hoje?</p>
+  <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">🌙</button>
+</div>
+
+<div class="grid">
+  <a href="pages/financeiro.html" class="card g">
+    <span class="icon">💰</span>
+    <span class="label">Financeiro</span>
+    <span class="desc">Receitas, despesas e contas</span>
+  </a>
+  <a href="pages/metas.html" class="card b">
+    <span class="icon">🎯</span>
+    <span class="label">Metas</span>
+    <span class="desc">Objetivos e agendamentos</span>
+  </a>
+  <a href="pages/habitos.html" class="card p">
+    <span class="icon">✅</span>
+    <span class="label">Hábitos</span>
+    <span class="desc">Rastreador diário</span>
+  </a>
+  <a href="pages/tarefas.html" class="card a">
+    <span class="icon">📋</span>
+    <span class="label">Tarefas</span>
+    <span class="desc">Gerenciador de to-dos</span>
+  </a>
+</div>
+
+<script>
+function toggleTheme(){
+  document.body.classList.toggle('dark');
+  const d=document.body.classList.contains('dark');
+  document.getElementById('theme-btn').textContent=d?'☀️':'🌙';
+  localStorage.setItem('tema',d?'dark':'light');
+}
+if(localStorage.getItem('tema')==='dark'){
+  document.body.classList.add('dark');
+  document.getElementById('theme-btn').textContent='☀️';
+}
+</script>
+</body>
+</html>
