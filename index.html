@@ -1,427 +1,578 @@
-import { useState, useEffect, useRef } from "react";
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>StudyPrep</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;display:flex;height:100vh;overflow:hidden;background:#f8f7f4;color:#1a1a1a}
+:root{--purple:#7F77DD;--purpleL:#EEEDFE;--purpleD:#3C3489;--teal:#1D9E75;--tealL:#E1F5EE;--tealD:#085041;--coral:#D85A30;--coralL:#FAECE7;--amber:#BA7517;--amberL:#FAEEDA;--blue:#378ADD;--blueL:#E6F1FB;--green:#639922;--greenL:#EAF3DE;--red:#E24B4A;--redL:#FCEBEB;--gray:#888780;--grayL:#F1EFE8;--border:#e0ded8;--surface:#fff;--bg:#f8f7f4;--text:#1a1a1a;--muted:#666;--faint:#999}
+#sidebar{width:210px;background:#fff;border-right:0.5px solid var(--border);display:flex;flex-direction:column;padding:1rem 0.5rem;gap:3px;flex-shrink:0;overflow-y:auto}
+#main{flex:1;overflow-y:auto;padding:1.5rem}
+.logo{padding:0.5rem 0.75rem 1rem}
+.logo-title{font-size:18px;font-weight:500;color:var(--purple)}
+.logo-sub{font-size:12px;color:var(--muted)}
+.xp-bar{height:4px;background:#e8e6e0;border-radius:4px;margin-top:6px}
+.xp-fill{height:4px;background:var(--purple);border-radius:4px;transition:width .4s}
+.nav-btn{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;border:none;background:transparent;color:var(--muted);cursor:pointer;font-size:14px;font-weight:400;text-align:left;width:100%;transition:all .15s}
+.nav-btn:hover{background:#f0effc;color:var(--purpleD)}
+.nav-btn.active{background:var(--purpleL);color:var(--purpleD);font-weight:500}
+.nav-icon{font-size:14px}
+.sidebar-footer{margin-top:auto;padding:0.75rem;font-size:12px;color:var(--faint)}
+.sidebar-footer span{font-size:18px;font-weight:500;color:var(--text);display:block}
+.section{display:none}
+.section.active{display:block}
+h2{font-size:20px;font-weight:500;margin-bottom:1rem}
+.card{background:#fff;border:0.5px solid var(--border);border-radius:12px;padding:1rem 1.25rem;margin-bottom:12px}
+.grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:20px}
+.stat-card{border-radius:10px;padding:1rem}
+.stat-icon{font-size:20px;margin-bottom:6px}
+.stat-val{font-size:26px;font-weight:500}
+.stat-lbl{font-size:12px;opacity:.8}
+.row{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.btn{border:none;border-radius:8px;padding:8px 16px;cursor:pointer;font-size:14px;font-weight:500;transition:opacity .15s}
+.btn:hover{opacity:.85}
+.btn-purple{background:var(--purple);color:#fff}
+.btn-teal{background:var(--teal);color:#fff}
+.btn-blue{background:var(--blue);color:#fff}
+.btn-gray{background:#e8e6e0;color:#555}
+.btn-coral{background:var(--coral);color:#fff}
+.tag{font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;display:inline-block}
+.input{width:100%;border:0.5px solid #ccc;border-radius:8px;padding:8px 10px;font-size:14px;background:#fff;color:#1a1a1a;margin-bottom:8px;outline:none;font-family:inherit}
+.input:focus{border-color:var(--purple)}
+textarea.input{resize:vertical;min-height:70px}
+.form-card{border:1px solid var(--purple);border-radius:12px;padding:1rem 1.25rem;background:#fff;margin-bottom:16px}
+.note-card{border-radius:12px;padding:1rem 1.25rem;margin-bottom:10px;border-left:3px solid var(--purple)}
+.mat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.quick-btns{display:flex;gap:8px;flex-wrap:wrap}
+.progress-bar-wrap{height:10px;background:#e8e6e0;border-radius:10px}
+.progress-bar{height:10px;border-radius:10px;transition:width .4s}
+.quiz-opt{display:block;width:100%;text-align:left;padding:12px 16px;margin-bottom:8px;border-radius:10px;border:0.5px solid #bbb;background:#fff;cursor:pointer;font-size:14px;color:#1a1a1a;transition:background .15s}
+.quiz-opt:hover{background:var(--purpleL)}
+.quiz-opt.correct{background:var(--greenL);border-color:var(--green);color:var(--green)}
+.quiz-opt.wrong{background:var(--redL);border-color:var(--red);color:var(--red)}
+.fc-card{min-height:180px;display:flex;align-items:center;justify-content:center;text-align:center;cursor:pointer;font-size:16px;border-radius:12px;border:0.5px solid var(--border);padding:2rem;background:#fff;transition:background .2s;user-select:none}
+.fc-card.flipped{background:var(--blueL)}
+.fc-dots{display:flex;gap:6px;justify-content:center;margin-top:8px}
+.fc-dot{width:8px;height:8px;border-radius:50%;background:#ccc;cursor:pointer;transition:background .15s}
+.fc-dot.active{background:var(--blue)}
+.pomo-big{font-size:64px;font-weight:500;font-variant-numeric:tabular-nums;text-align:center;padding:2rem;border-radius:12px;border:0.5px solid var(--border);background:#fff;margin-bottom:16px;transition:color .3s}
+.pomo-btns{display:flex;gap:8px;justify-content:center}
+.bar-wrap{display:flex;gap:6px;align-items:flex-end;height:90px;margin-top:8px}
+.bar-col{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1}
+.bar-rect{background:var(--purple);border-radius:4px;width:100%;opacity:.8;transition:height .4s}
+.bar-lbl{font-size:10px;color:var(--faint)}
+.bar-val{font-size:10px;color:var(--muted)}
+.review-item{border-radius:8px;padding:10px 14px;margin-bottom:6px;border-left:3px solid}
+.hist-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:0.5px solid var(--border)}
+.hist-row:last-child{border-bottom:none}
+.result-big{font-size:48px;font-weight:500;margin-bottom:8px}
+</style>
+</head>
+<body>
 
-const COLORS = {
-  purple: "#7F77DD", purpleLight: "#EEEDFE", purpleDark: "#3C3489",
-  teal: "#1D9E75", tealLight: "#E1F5EE", tealDark: "#085041",
-  coral: "#D85A30", coralLight: "#FAECE7",
-  amber: "#BA7517", amberLight: "#FAEEDA",
-  blue: "#378ADD", blueLight: "#E6F1FB",
-  green: "#639922", greenLight: "#EAF3DE",
-  red: "#E24B4A", redLight: "#FCEBEB",
-  gray: "#888780", grayLight: "#F1EFE8",
-};
+<div id="sidebar">
+  <div class="logo">
+    <div class="logo-title">StudyPrep</div>
+    <div class="logo-sub" id="lvl-label">Nível 1 · 0/100 XP</div>
+    <div class="xp-bar"><div class="xp-fill" id="xp-fill" style="width:0%"></div></div>
+  </div>
+  <button class="nav-btn active" onclick="go('dashboard')"><span class="nav-icon">◈</span>Dashboard</button>
+  <button class="nav-btn" onclick="go('notas')"><span class="nav-icon">✎</span>Anotações</button>
+  <button class="nav-btn" onclick="go('materiais')"><span class="nav-icon">⊞</span>Materiais</button>
+  <button class="nav-btn" onclick="go('simulado')"><span class="nav-icon">✦</span>Simulado</button>
+  <button class="nav-btn" onclick="go('flashcards')"><span class="nav-icon">⟳</span>Flashcards</button>
+  <button class="nav-btn" onclick="go('progresso')"><span class="nav-icon">▲</span>Progresso</button>
+  <button class="nav-btn" onclick="go('pomodoro')"><span class="nav-icon">◷</span>Pomodoro</button>
+  <div class="sidebar-footer">Total estudado<span id="total-min">0 min</span></div>
+</div>
 
-const SECTIONS = ["Dashboard","Anotações","Materiais","Simulado","Flashcards","Progresso","Pomodoro"];
-const SECTION_ICONS = ["◈","✎","⊞","✦","⟳","▲","◷"];
+<div id="main">
 
-const sampleQuestions = [
-  { id:1, q:"Qual é a capital do Brasil?", options:["São Paulo","Rio de Janeiro","Brasília","Salvador"], answer:2, subject:"Geografia" },
-  { id:2, q:"Quanto é 12 × 13?", options:["144","152","156","148"], answer:2, subject:"Matemática" },
-  { id:3, q:"Quem escreveu Dom Casmurro?", options:["José de Alencar","Machado de Assis","Clarice Lispector","Carlos Drummond"], answer:1, subject:"Literatura" },
-  { id:4, q:"Qual é a fórmula da água?", options:["CO2","H2O","NaCl","O2"], answer:1, subject:"Química" },
-  { id:5, q:"Em que ano o Brasil foi descoberto?", options:["1492","1498","1500","1502"], answer:2, subject:"História" },
-];
+<!-- DASHBOARD -->
+<div id="sec-dashboard" class="section active">
+  <h2>Bem-vindo de volta!</h2>
+  <div class="grid4" id="dash-stats"></div>
+  <div class="card">
+    <div style="font-weight:500;margin-bottom:12px">Histórico de estudo</div>
+    <div class="bar-wrap" id="bar-chart"></div>
+  </div>
+  <div class="card">
+    <div style="font-weight:500;margin-bottom:10px">Acesso rápido</div>
+    <div class="quick-btns">
+      <button class="btn btn-purple" onclick="go('simulado')">✦ Novo simulado</button>
+      <button class="btn btn-purple" onclick="go('flashcards')">⟳ Flashcards</button>
+      <button class="btn btn-purple" onclick="go('notas')">✎ Nova anotação</button>
+      <button class="btn btn-purple" onclick="go('pomodoro')">◷ Pomodoro</button>
+    </div>
+  </div>
+</div>
 
-const sampleFlashcards = [
-  { front:"O que é fotossíntese?", back:"Processo pelo qual plantas convertem luz solar em energia química (glicose), usando CO₂ e água.", subject:"Biologia" },
-  { front:"O que é mitose?", back:"Divisão celular que gera duas células filhas geneticamente idênticas à célula-mãe.", subject:"Biologia" },
-  { front:"O que é hipérbole?", back:"Figura de linguagem que consiste no exagero intencional de uma ideia para dar ênfase.", subject:"Português" },
-];
+<!-- NOTAS -->
+<div id="sec-notas" class="section">
+  <div class="row">
+    <h2 style="margin:0">Anotações</h2>
+    <button class="btn btn-purple" onclick="toggleForm('note-form')">+ Nova</button>
+  </div>
+  <div id="note-form" class="form-card" style="display:none">
+    <input class="input" id="n-title" placeholder="Título"/>
+    <input class="input" id="n-subj" placeholder="Disciplina"/>
+    <select class="input" id="n-color">
+      <option value="purple">Roxo</option>
+      <option value="teal">Verde</option>
+      <option value="coral">Coral</option>
+      <option value="amber">Âmbar</option>
+      <option value="blue">Azul</option>
+    </select>
+    <textarea class="input" id="n-content" placeholder="Conteúdo..."></textarea>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-purple" onclick="addNote()">Salvar</button>
+      <button class="btn btn-gray" onclick="toggleForm('note-form')">Cancelar</button>
+    </div>
+  </div>
+  <div id="notes-list"></div>
+</div>
 
-export default function StudyApp() {
-  const [section, setSection] = useState("Dashboard");
-  const [notes, setNotes] = useState([
-    { id:1, title:"Revisão de Matemática", content:"Fórmula de Bhaskara: x = (-b ± √Δ) / 2a\nDelta: Δ = b² - 4ac", subject:"Matemática", date:"2026-05-01", color:"purple" },
-    { id:2, title:"Figuras de Linguagem", content:"Metáfora, metonímia, hipérbole, antítese, paradoxo...", subject:"Português", date:"2026-05-02", color:"teal" },
-  ]);
-  const [materials, setMaterials] = useState([
-    { id:1, title:"Apostila de História", type:"PDF", subject:"História", date:"2026-04-30", url:"#" },
-    { id:2, title:"Vídeo: Revolução Industrial", type:"Vídeo", subject:"História", date:"2026-05-01", url:"#" },
-  ]);
-  const [flashcards, setFlashcards] = useState(sampleFlashcards);
-  const [fcIdx, setFcIdx] = useState(0);
-  const [fcFlipped, setFcFlipped] = useState(false);
-  const [quiz, setQuiz] = useState({ started:false, questions:[], current:0, answers:[], done:false });
-  const [newNote, setNewNote] = useState({ title:"", content:"", subject:"", color:"purple" });
-  const [newMat, setNewMat] = useState({ title:"", type:"PDF", subject:"", url:"" });
-  const [newFC, setNewFC] = useState({ front:"", back:"", subject:"" });
-  const [showNoteForm, setShowNoteForm] = useState(false);
-  const [showMatForm, setShowMatForm] = useState(false);
-  const [showFCForm, setShowFCForm] = useState(false);
-  const [timer, setTimer] = useState({ running:false, seconds:25*60, mode:"work", sessions:0 });
-  const [xp, setXp] = useState(320);
-  const [studyLog, setStudyLog] = useState([
-    { date:"2026-04-28", minutes:45, subject:"Matemática" },
-    { date:"2026-04-29", minutes:30, subject:"História" },
-    { date:"2026-04-30", minutes:60, subject:"Biologia" },
-    { date:"2026-05-01", minutes:50, subject:"Português" },
-    { date:"2026-05-02", minutes:25, subject:"Química" },
-  ]);
-  const timerRef = useRef(null);
+<!-- MATERIAIS -->
+<div id="sec-materiais" class="section">
+  <div class="row">
+    <h2 style="margin:0">Materiais</h2>
+    <button class="btn btn-teal" onclick="toggleForm('mat-form')">+ Adicionar</button>
+  </div>
+  <div id="mat-form" class="form-card" style="display:none;border-color:var(--teal)">
+    <input class="input" id="m-title" placeholder="Título do material"/>
+    <input class="input" id="m-subj" placeholder="Disciplina"/>
+    <select class="input" id="m-type">
+      <option>PDF</option><option>Vídeo</option><option>Artigo</option><option>Link</option>
+    </select>
+    <input class="input" id="m-url" placeholder="URL ou referência"/>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-teal" onclick="addMat()">Salvar</button>
+      <button class="btn btn-gray" onclick="toggleForm('mat-form')">Cancelar</button>
+    </div>
+  </div>
+  <div class="mat-grid" id="mat-list"></div>
+</div>
 
-  useEffect(() => {
-    if (timer.running) {
-      timerRef.current = setInterval(() => {
-        setTimer(t => {
-          if (t.seconds <= 1) {
-            clearInterval(timerRef.current);
-            const isWork = t.mode === "work";
-            return { ...t, running:false, sessions: isWork ? t.sessions+1 : t.sessions, mode: isWork ? "break" : "work", seconds: isWork ? 5*60 : 25*60 };
-          }
-          return { ...t, seconds: t.seconds-1 };
-        });
-      }, 1000);
-    } else clearInterval(timerRef.current);
-    return () => clearInterval(timerRef.current);
-  }, [timer.running]);
-
-  const fmt = s => `${String(Math.floor(s/60)).padStart(2,"0")}:${String(s%60).padStart(2,"0")}`;
-
-  const startQuiz = () => {
-    const shuffled = [...sampleQuestions].sort(() => Math.random()-0.5);
-    setQuiz({ started:true, questions:shuffled, current:0, answers:[], done:false });
-  };
-  const answerQ = (idx) => {
-    const q = quiz.questions[quiz.current];
-    const correct = idx === q.answer;
-    const answers = [...quiz.answers, { q:q.id, chosen:idx, correct }];
-    if (correct) setXp(x => x+10);
-    if (quiz.current+1 >= quiz.questions.length) {
-      setQuiz(qz => ({ ...qz, answers, done:true }));
-    } else {
-      setQuiz(qz => ({ ...qz, answers, current:qz.current+1 }));
-    }
-  };
-
-  const addNote = () => {
-    if (!newNote.title) return;
-    setNotes(n => [...n, { ...newNote, id:Date.now(), date:new Date().toISOString().slice(0,10) }]);
-    setNewNote({ title:"", content:"", subject:"", color:"purple" });
-    setShowNoteForm(false); setXp(x=>x+5);
-  };
-  const addMat = () => {
-    if (!newMat.title) return;
-    setMaterials(m => [...m, { ...newMat, id:Date.now(), date:new Date().toISOString().slice(0,10) }]);
-    setNewMat({ title:"", type:"PDF", subject:"", url:"" }); setShowMatForm(false);
-  };
-  const addFC = () => {
-    if (!newFC.front) return;
-    setFlashcards(f => [...f, { ...newFC, id:Date.now() }]);
-    setNewFC({ front:"", back:"", subject:"" }); setShowFCForm(false); setXp(x=>x+5);
-  };
-
-  const level = Math.floor(xp/100)+1;
-  const xpInLevel = xp%100;
-  const totalMin = studyLog.reduce((a,b)=>a+b.minutes,0);
-  const noteCount = notes.length;
-  const matCount = materials.length;
-
-  const typeIcon = { PDF:"⊞", Vídeo:"▷", Artigo:"✎", Link:"⌁" };
-  const noteColors = { purple:COLORS.purpleLight, teal:COLORS.tealLight, coral:COLORS.coralLight, amber:COLORS.amberLight, blue:COLORS.blueLight };
-  const noteText = { purple:COLORS.purpleDark, teal:COLORS.tealDark, coral:"#993C1D", amber:"#854F0B", blue:"#0C447C" };
-
-  const s = { fontFamily:"system-ui,sans-serif", display:"flex", height:"100vh", overflow:"hidden", background:"var(--color-background-primary)" };
-  const sidebar = { width:200, background:"var(--color-background-secondary)", borderRight:"0.5px solid var(--color-border-tertiary)", display:"flex", flexDirection:"column", padding:"1rem 0.5rem", gap:4, flexShrink:0 };
-  const main = { flex:1, overflowY:"auto", padding:"1.5rem" };
-  const card = { background:"var(--color-background-primary)", border:"0.5px solid var(--color-border-tertiary)", borderRadius:12, padding:"1rem 1.25rem", marginBottom:12 };
-  const btn = (bg=COLORS.purple,col="#fff") => ({ background:bg, color:col, border:"none", borderRadius:8, padding:"8px 16px", cursor:"pointer", fontSize:14, fontWeight:500 });
-  const input = { width:"100%", border:"0.5px solid var(--color-border-secondary)", borderRadius:8, padding:"8px 10px", fontSize:14, background:"var(--color-background-primary)", color:"var(--color-text-primary)", boxSizing:"border-box", marginBottom:8 };
-  const tag = (bg,col) => ({ background:bg, color:col, fontSize:11, fontWeight:500, padding:"2px 8px", borderRadius:20, display:"inline-block" });
-
-  return (
-    <div style={s}>
-      <div style={sidebar}>
-        <div style={{ padding:"0.5rem 0.75rem 1rem" }}>
-          <div style={{ fontSize:18, fontWeight:500, color:COLORS.purple }}>StudyPrep</div>
-          <div style={{ fontSize:12, color:"var(--color-text-secondary)" }}>Nível {level} · {xpInLevel}/100 XP</div>
-          <div style={{ height:4, background:"var(--color-background-tertiary)", borderRadius:4, marginTop:6 }}>
-            <div style={{ height:4, width:`${xpInLevel}%`, background:COLORS.purple, borderRadius:4 }}/>
-          </div>
-        </div>
-        {SECTIONS.map((sec,i) => (
-          <button key={sec} onClick={() => setSection(sec)} style={{ display:"flex", alignItems:"center", gap:8, padding:"8px 12px", borderRadius:8, border:"none", background: section===sec ? COLORS.purpleLight : "transparent", color: section===sec ? COLORS.purpleDark : "var(--color-text-secondary)", cursor:"pointer", fontSize:14, fontWeight: section===sec ? 500 : 400, textAlign:"left" }}>
-            <span style={{ fontSize:14 }}>{SECTION_ICONS[i]}</span>{sec}
-          </button>
-        ))}
-        <div style={{ marginTop:"auto", padding:"0.75rem", fontSize:12, color:"var(--color-text-tertiary)" }}>
-          <div>Total estudado</div>
-          <div style={{ fontSize:18, fontWeight:500, color:"var(--color-text-primary)" }}>{totalMin}min</div>
-        </div>
-      </div>
-
-      <div style={main}>
-        {section === "Dashboard" && (
-          <div>
-            <h2 style={{ margin:"0 0 1rem", fontSize:20, fontWeight:500 }}>Bem-vindo de volta!</h2>
-            <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(140px,1fr))", gap:12, marginBottom:20 }}>
-              {[["Anotações",noteCount,"✎",COLORS.purpleLight,COLORS.purpleDark],["Materiais",matCount,"⊞",COLORS.tealLight,COLORS.tealDark],["Flashcards",flashcards.length,"⟳",COLORS.blueLight,"#0C447C"],["XP Total",xp,"▲",COLORS.amberLight,"#854F0B"]].map(([l,v,ic,bg,tc])=>(
-                <div key={l} style={{ background:bg, borderRadius:10, padding:"1rem", border:"0.5px solid var(--color-border-tertiary)" }}>
-                  <div style={{ fontSize:20 }}>{ic}</div>
-                  <div style={{ fontSize:24, fontWeight:500, color:tc }}>{v}</div>
-                  <div style={{ fontSize:12, color:tc, opacity:0.8 }}>{l}</div>
-                </div>
-              ))}
-            </div>
-            <div style={card}>
-              <div style={{ fontWeight:500, marginBottom:12 }}>Histórico de estudo (últimos dias)</div>
-              <div style={{ display:"flex", gap:8, alignItems:"flex-end", height:80 }}>
-                {studyLog.map((d,i) => {
-                  const max = Math.max(...studyLog.map(x=>x.minutes));
-                  const h = Math.round((d.minutes/max)*70);
-                  return (
-                    <div key={i} style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:4, flex:1 }}>
-                      <div style={{ fontSize:10, color:"var(--color-text-secondary)" }}>{d.minutes}m</div>
-                      <div style={{ height:h, background:COLORS.purple, borderRadius:4, width:"100%", opacity:0.8 }}/>
-                      <div style={{ fontSize:10, color:"var(--color-text-tertiary)" }}>{d.date.slice(5)}</div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-            <div style={card}>
-              <div style={{ fontWeight:500, marginBottom:8 }}>Acesso rápido</div>
-              <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
-                {[["Novo simulado","✦","Simulado"],["Ver flashcards","⟳","Flashcards"],["Nova anotação","✎","Anotações"],["Pomodoro","◷","Pomodoro"]].map(([l,ic,sc])=>(
-                  <button key={l} onClick={()=>setSection(sc)} style={{ ...btn(COLORS.purpleLight, COLORS.purpleDark), display:"flex", alignItems:"center", gap:6 }}>{ic} {l}</button>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {section === "Anotações" && (
-          <div>
-            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16 }}>
-              <h2 style={{ margin:0, fontSize:20, fontWeight:500 }}>Anotações</h2>
-              <button style={btn(COLORS.purple)} onClick={()=>setShowNoteForm(s=>!s)}>+ Nova</button>
-            </div>
-            {showNoteForm && (
-              <div style={{ ...card, borderColor:COLORS.purple }}>
-                <input style={input} placeholder="Título" value={newNote.title} onChange={e=>setNewNote(n=>({...n,title:e.target.value}))} />
-                <input style={input} placeholder="Disciplina" value={newNote.subject} onChange={e=>setNewNote(n=>({...n,subject:e.target.value}))} />
-                <select style={{...input,marginBottom:8}} value={newNote.color} onChange={e=>setNewNote(n=>({...n,color:e.target.value}))}>
-                  <option value="purple">Roxo</option><option value="teal">Verde</option><option value="coral">Coral</option><option value="amber">Âmbar</option><option value="blue">Azul</option>
-                </select>
-                <textarea style={{...input,minHeight:80,resize:"vertical"}} placeholder="Conteúdo..." value={newNote.content} onChange={e=>setNewNote(n=>({...n,content:e.target.value}))} />
-                <div style={{ display:"flex", gap:8 }}>
-                  <button style={btn(COLORS.purple)} onClick={addNote}>Salvar</button>
-                  <button style={btn("#eee","#555")} onClick={()=>setShowNoteForm(false)}>Cancelar</button>
-                </div>
-              </div>
-            )}
-            {notes.map(n => (
-              <div key={n.id} style={{ ...card, borderLeft:`3px solid ${noteText[n.color]||COLORS.purple}`, background:noteColors[n.color]||"var(--color-background-primary)" }}>
-                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start" }}>
-                  <div>
-                    <div style={{ fontWeight:500, marginBottom:4, color:noteText[n.color]||COLORS.purpleDark }}>{n.title}</div>
-                    <div style={{ fontSize:13, color:"var(--color-text-secondary)", whiteSpace:"pre-line" }}>{n.content}</div>
-                  </div>
-                  <div style={{ display:"flex", flexDirection:"column", alignItems:"flex-end", gap:4 }}>
-                    {n.subject && <span style={tag(noteText[n.color]+"22", noteText[n.color]||COLORS.purpleDark)}>{n.subject}</span>}
-                    <span style={{ fontSize:11, color:"var(--color-text-tertiary)" }}>{n.date}</span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {section === "Materiais" && (
-          <div>
-            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16 }}>
-              <h2 style={{ margin:0, fontSize:20, fontWeight:500 }}>Materiais salvos</h2>
-              <button style={btn(COLORS.teal)} onClick={()=>setShowMatForm(s=>!s)}>+ Adicionar</button>
-            </div>
-            {showMatForm && (
-              <div style={{ ...card, borderColor:COLORS.teal }}>
-                <input style={input} placeholder="Título do material" value={newMat.title} onChange={e=>setNewMat(m=>({...m,title:e.target.value}))} />
-                <input style={input} placeholder="Disciplina" value={newMat.subject} onChange={e=>setNewMat(m=>({...m,subject:e.target.value}))} />
-                <select style={{...input}} value={newMat.type} onChange={e=>setNewMat(m=>({...m,type:e.target.value}))}>
-                  <option>PDF</option><option>Vídeo</option><option>Artigo</option><option>Link</option>
-                </select>
-                <input style={input} placeholder="URL ou referência" value={newMat.url} onChange={e=>setNewMat(m=>({...m,url:e.target.value}))} />
-                <div style={{ display:"flex", gap:8 }}>
-                  <button style={btn(COLORS.teal)} onClick={addMat}>Salvar</button>
-                  <button style={btn("#eee","#555")} onClick={()=>setShowMatForm(false)}>Cancelar</button>
-                </div>
-              </div>
-            )}
-            <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(220px,1fr))", gap:12 }}>
-              {materials.map(m => (
-                <div key={m.id} style={card}>
-                  <div style={{ fontSize:28, marginBottom:8 }}>{typeIcon[m.type]||"⊞"}</div>
-                  <div style={{ fontWeight:500, marginBottom:4 }}>{m.title}</div>
-                  <div style={{ display:"flex", gap:6, marginBottom:8 }}>
-                    <span style={tag(COLORS.tealLight, COLORS.tealDark)}>{m.type}</span>
-                    {m.subject && <span style={tag(COLORS.grayLight, "#5F5E5A")}>{m.subject}</span>}
-                  </div>
-                  <div style={{ fontSize:11, color:"var(--color-text-tertiary)" }}>{m.date}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {section === "Simulado" && (
-          <div>
-            <h2 style={{ margin:"0 0 1rem", fontSize:20, fontWeight:500 }}>Simulado</h2>
-            {!quiz.started && !quiz.done && (
-              <div style={card}>
-                <div style={{ fontSize:15, marginBottom:12, color:"var(--color-text-secondary)" }}>{sampleQuestions.length} questões · Múltipla escolha · +10 XP por acerto</div>
-                <div style={{ marginBottom:16 }}>
-                  {["Geografia","Matemática","Literatura","Química","História"].map(s => (
-                    <span key={s} style={{...tag(COLORS.purpleLight, COLORS.purpleDark), marginRight:6, marginBottom:6}}>{s}</span>
-                  ))}
-                </div>
-                <button style={btn(COLORS.purple)} onClick={startQuiz}>Iniciar simulado</button>
-              </div>
-            )}
-            {quiz.started && !quiz.done && (() => {
-              const q = quiz.questions[quiz.current];
-              return (
-                <div>
-                  <div style={{ fontSize:13, color:"var(--color-text-secondary)", marginBottom:8 }}>Questão {quiz.current+1} de {quiz.questions.length} · {q.subject}</div>
-                  <div style={{ height:4, background:"var(--color-background-tertiary)", borderRadius:4, marginBottom:20 }}>
-                    <div style={{ height:4, width:`${((quiz.current)/quiz.questions.length)*100}%`, background:COLORS.purple, borderRadius:4, transition:"width 0.3s" }}/>
-                  </div>
-                  <div style={{ ...card, fontSize:16, fontWeight:500, marginBottom:16 }}>{q.q}</div>
-                  {q.options.map((opt,i) => (
-                    <button key={i} onClick={()=>answerQ(i)} style={{ display:"block", width:"100%", textAlign:"left", padding:"12px 16px", marginBottom:8, borderRadius:10, border:`0.5px solid ${COLORS.gray}`, background:"var(--color-background-primary)", cursor:"pointer", fontSize:14, color:"var(--color-text-primary)" }}>
-                      <span style={{ fontWeight:500, marginRight:8 }}>{["A","B","C","D"][i]}.</span>{opt}
-                    </button>
-                  ))}
-                </div>
-              );
-            })()}
-            {quiz.done && (() => {
-              const correct = quiz.answers.filter(a=>a.correct).length;
-              const pct = Math.round((correct/quiz.answers.length)*100);
-              return (
-                <div style={card}>
-                  <div style={{ fontSize:18, fontWeight:500, marginBottom:8 }}>Resultado</div>
-                  <div style={{ fontSize:40, fontWeight:500, color: pct>=70?COLORS.green:pct>=50?COLORS.amber:COLORS.red, marginBottom:8 }}>{pct}%</div>
-                  <div style={{ color:"var(--color-text-secondary)", marginBottom:16 }}>{correct} de {quiz.answers.length} acertos · +{correct*10} XP ganhos</div>
-                  <div style={{ height:8, background:"var(--color-background-tertiary)", borderRadius:8, marginBottom:20 }}>
-                    <div style={{ height:8, width:`${pct}%`, background:pct>=70?COLORS.green:pct>=50?COLORS.amber:COLORS.red, borderRadius:8 }}/>
-                  </div>
-                  {quiz.questions.map((q,i) => {
-                    const ans = quiz.answers[i];
-                    return (
-                      <div key={q.id} style={{ ...card, borderLeft:`3px solid ${ans.correct?COLORS.green:COLORS.red}`, marginBottom:8, padding:"10px 14px" }}>
-                        <div style={{ fontSize:13, fontWeight:500, marginBottom:4 }}>{q.q}</div>
-                        <div style={{ fontSize:12, color: ans.correct?COLORS.green:COLORS.red }}>{ans.correct?"✓ Correto":"✗ Errado"} — Resposta: {q.options[q.answer]}</div>
-                      </div>
-                    );
-                  })}
-                  <button style={{...btn(COLORS.purple), marginTop:12}} onClick={()=>setQuiz({started:false,questions:[],current:0,answers:[],done:false})}>Novo simulado</button>
-                </div>
-              );
-            })()}
-          </div>
-        )}
-
-        {section === "Flashcards" && (
-          <div>
-            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16 }}>
-              <h2 style={{ margin:0, fontSize:20, fontWeight:500 }}>Flashcards</h2>
-              <button style={btn(COLORS.blue)} onClick={()=>setShowFCForm(s=>!s)}>+ Novo</button>
-            </div>
-            {showFCForm && (
-              <div style={{ ...card, borderColor:COLORS.blue, marginBottom:20 }}>
-                <input style={input} placeholder="Frente (pergunta)" value={newFC.front} onChange={e=>setNewFC(f=>({...f,front:e.target.value}))} />
-                <textarea style={{...input,minHeight:60}} placeholder="Verso (resposta)" value={newFC.back} onChange={e=>setNewFC(f=>({...f,back:e.target.value}))} />
-                <input style={input} placeholder="Disciplina" value={newFC.subject} onChange={e=>setNewFC(f=>({...f,subject:e.target.value}))} />
-                <div style={{ display:"flex", gap:8 }}>
-                  <button style={btn(COLORS.blue)} onClick={addFC}>Criar</button>
-                  <button style={btn("#eee","#555")} onClick={()=>setShowFCForm(false)}>Cancelar</button>
-                </div>
-              </div>
-            )}
-            {flashcards.length > 0 && (
-              <div>
-                <div style={{ fontSize:13, color:"var(--color-text-secondary)", marginBottom:12 }}>Card {fcIdx+1} de {flashcards.length} · {flashcards[fcIdx].subject}</div>
-                <div onClick={()=>setFcFlipped(f=>!f)} style={{ ...card, minHeight:180, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", textAlign:"center", background:fcFlipped?COLORS.blueLight:"var(--color-background-secondary)", fontSize:16, fontWeight:fcFlipped?400:500, color:"var(--color-text-primary)", position:"relative" }}>
-                  <div>
-                    <div style={{ fontSize:11, color:"var(--color-text-tertiary)", marginBottom:12 }}>{fcFlipped?"RESPOSTA":"PERGUNTA"}</div>
-                    <div>{fcFlipped ? flashcards[fcIdx].back : flashcards[fcIdx].front}</div>
-                    <div style={{ fontSize:11, color:"var(--color-text-tertiary)", marginTop:16 }}>toque para {fcFlipped?"ver pergunta":"revelar"}</div>
-                  </div>
-                </div>
-                <div style={{ display:"flex", gap:8, justifyContent:"center", marginTop:12 }}>
-                  <button style={btn("#eee","#555")} onClick={()=>{ setFcIdx(i=>(i-1+flashcards.length)%flashcards.length); setFcFlipped(false); }}>← Anterior</button>
-                  <button style={btn(COLORS.blue)} onClick={()=>{ setFcIdx(i=>(i+1)%flashcards.length); setFcFlipped(false); }}>Próximo →</button>
-                </div>
-                <div style={{ display:"flex", gap:8, justifyContent:"center", marginTop:8 }}>
-                  {flashcards.map((_,i)=>(
-                    <div key={i} onClick={()=>{setFcIdx(i);setFcFlipped(false);}} style={{ width:8, height:8, borderRadius:50, background:i===fcIdx?COLORS.blue:"var(--color-border-tertiary)", cursor:"pointer" }} />
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        {section === "Progresso" && (
-          <div>
-            <h2 style={{ margin:"0 0 1rem", fontSize:20, fontWeight:500 }}>Seu Progresso</h2>
-            <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(140px,1fr))", gap:12, marginBottom:20 }}>
-              {[["Nível",level,"▲",COLORS.purpleLight,COLORS.purpleDark],["XP Total",xp,"✦",COLORS.amberLight,"#854F0B"],["Min estudados",totalMin,"◷",COLORS.tealLight,COLORS.tealDark],["Anotações",noteCount,"✎",COLORS.blueLight,"#0C447C"]].map(([l,v,ic,bg,tc])=>(
-                <div key={l} style={{ background:bg, borderRadius:10, padding:"1rem" }}>
-                  <div style={{ fontSize:20 }}>{ic}</div>
-                  <div style={{ fontSize:28, fontWeight:500, color:tc }}>{v}</div>
-                  <div style={{ fontSize:12, color:tc, opacity:0.8 }}>{l}</div>
-                </div>
-              ))}
-            </div>
-            <div style={card}>
-              <div style={{ fontWeight:500, marginBottom:12 }}>Progresso de nível</div>
-              <div style={{ display:"flex", justifyContent:"space-between", fontSize:13, color:"var(--color-text-secondary)", marginBottom:6 }}>
-                <span>Nível {level}</span><span>{xpInLevel}/100 XP</span>
-              </div>
-              <div style={{ height:10, background:"var(--color-background-tertiary)", borderRadius:10 }}>
-                <div style={{ height:10, width:`${xpInLevel}%`, background:COLORS.purple, borderRadius:10, transition:"width 0.5s" }}/>
-              </div>
-            </div>
-            <div style={card}>
-              <div style={{ fontWeight:500, marginBottom:12 }}>Histórico de estudo</div>
-              {studyLog.map((d,i) => (
-                <div key={i} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"8px 0", borderBottom:i<studyLog.length-1?"0.5px solid var(--color-border-tertiary)":"none" }}>
-                  <div>
-                    <span style={{ fontSize:14, fontWeight:500 }}>{d.subject}</span>
-                    <span style={{ fontSize:12, color:"var(--color-text-tertiary)", marginLeft:8 }}>{d.date}</span>
-                  </div>
-                  <span style={{ fontSize:14, fontWeight:500, color:COLORS.purple }}>{d.minutes} min</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {section === "Pomodoro" && (
-          <div style={{ maxWidth:400, margin:"0 auto", textAlign:"center" }}>
-            <h2 style={{ fontSize:20, fontWeight:500, marginBottom:4 }}>Pomodoro</h2>
-            <div style={{ fontSize:13, color:"var(--color-text-secondary)", marginBottom:24 }}>{timer.mode==="work"?"Foco":"Pausa"} · {timer.sessions} sessões concluídas</div>
-            <div style={{ ...card, display:"flex", alignItems:"center", justifyContent:"center", height:180 }}>
-              <div style={{ fontSize:64, fontWeight:500, color:timer.mode==="work"?COLORS.purple:COLORS.teal, fontVariantNumeric:"tabular-nums" }}>{fmt(timer.seconds)}</div>
-            </div>
-            <div style={{ display:"flex", gap:8, justifyContent:"center", marginTop:16 }}>
-              <button style={btn(timer.running?COLORS.coral:COLORS.purple)} onClick={()=>setTimer(t=>({...t,running:!t.running}))}>
-                {timer.running?"Pausar":"Iniciar"}
-              </button>
-              <button style={btn("#eee","#555")} onClick={()=>{ setTimer(t=>({...t,running:false,seconds:timer.mode==="work"?25*60:5*60})); }}>Reset</button>
-              <button style={btn(COLORS.gray,"#fff")} onClick={()=>setTimer(t=>({ ...t, running:false, mode:t.mode==="work"?"break":"work", seconds:t.mode==="work"?5*60:25*60 }))}>
-                {timer.mode==="work"?"→ Pausa":"→ Foco"}
-              </button>
-            </div>
-            <div style={{ marginTop:24, ...card }}>
-              <div style={{ fontWeight:500, marginBottom:8 }}>Como funciona</div>
-              <div style={{ fontSize:13, color:"var(--color-text-secondary)", textAlign:"left", lineHeight:1.7 }}>
-                25 minutos de foco total, depois 5 minutos de pausa. A cada 4 sessões, faça uma pausa longa de 15 a 30 minutos. Essa técnica aumenta a concentração e reduz a fadiga mental.
-              </div>
-            </div>
-          </div>
-        )}
+<!-- SIMULADO -->
+<div id="sec-simulado" class="section">
+  <h2>Simulado</h2>
+  <div id="quiz-start">
+    <div class="card">
+      <div style="font-size:15px;margin-bottom:12px;color:var(--muted)">5 questões · Múltipla escolha · +10 XP por acerto</div>
+      <div style="margin-bottom:16px" id="quiz-tags"></div>
+      <button class="btn btn-purple" onclick="startQuiz()">Iniciar simulado</button>
+    </div>
+  </div>
+  <div id="quiz-running" style="display:none">
+    <div style="font-size:13px;color:var(--muted);margin-bottom:6px" id="quiz-counter"></div>
+    <div style="height:4px;background:#e8e6e0;border-radius:4px;margin-bottom:20px">
+      <div id="quiz-prog" style="height:4px;background:var(--purple);border-radius:4px;transition:width .3s;width:0%"></div>
+    </div>
+    <div class="card" id="quiz-q" style="font-size:16px;font-weight:500;margin-bottom:16px"></div>
+    <div id="quiz-opts"></div>
+  </div>
+  <div id="quiz-done" style="display:none">
+    <div class="card" style="text-align:center">
+      <div style="font-weight:500;margin-bottom:8px;font-size:18px">Resultado</div>
+      <div class="result-big" id="quiz-pct"></div>
+      <div style="color:var(--muted);margin-bottom:16px" id="quiz-summary"></div>
+      <div class="progress-bar-wrap" style="margin-bottom:20px">
+        <div class="progress-bar" id="quiz-res-bar"></div>
       </div>
     </div>
-  );
+    <div id="quiz-review"></div>
+    <button class="btn btn-purple" onclick="resetQuiz()" style="margin-top:12px">Novo simulado</button>
+  </div>
+</div>
+
+<!-- FLASHCARDS -->
+<div id="sec-flashcards" class="section">
+  <div class="row">
+    <h2 style="margin:0">Flashcards</h2>
+    <button class="btn btn-blue" onclick="toggleForm('fc-form')">+ Novo</button>
+  </div>
+  <div id="fc-form" class="form-card" style="display:none;border-color:var(--blue)">
+    <input class="input" id="fc-front" placeholder="Frente (pergunta)"/>
+    <textarea class="input" id="fc-back" placeholder="Verso (resposta)"></textarea>
+    <input class="input" id="fc-subj" placeholder="Disciplina"/>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-blue" onclick="addFC()">Criar</button>
+      <button class="btn btn-gray" onclick="toggleForm('fc-form')">Cancelar</button>
+    </div>
+  </div>
+  <div id="fc-label" style="font-size:13px;color:var(--muted);margin-bottom:12px"></div>
+  <div class="fc-card" id="fc-card" onclick="flipFC()">
+    <div>
+      <div style="font-size:11px;color:var(--faint);margin-bottom:12px" id="fc-side">PERGUNTA</div>
+      <div id="fc-text"></div>
+      <div style="font-size:11px;color:var(--faint);margin-top:14px">toque para revelar</div>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;justify-content:center;margin-top:14px">
+    <button class="btn btn-gray" onclick="prevFC()">← Anterior</button>
+    <button class="btn btn-blue" onclick="nextFC()">Próximo →</button>
+  </div>
+  <div class="fc-dots" id="fc-dots"></div>
+</div>
+
+<!-- PROGRESSO -->
+<div id="sec-progresso" class="section">
+  <h2>Seu Progresso</h2>
+  <div class="grid4" id="prog-stats"></div>
+  <div class="card">
+    <div style="font-weight:500;margin-bottom:8px">Progresso de nível</div>
+    <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-bottom:6px">
+      <span id="prog-lvl-label">Nível 1</span><span id="prog-xp-label">0/100 XP</span>
+    </div>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar" id="prog-xp-bar" style="background:var(--purple)"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div style="font-weight:500;margin-bottom:12px">Histórico de estudo</div>
+    <div id="prog-hist"></div>
+  </div>
+</div>
+
+<!-- POMODORO -->
+<div id="sec-pomodoro" class="section">
+  <div style="max-width:400px;margin:0 auto;text-align:center">
+    <h2 style="margin-bottom:4px">Pomodoro</h2>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:24px" id="pomo-status">Foco · 0 sessões</div>
+    <div class="pomo-big" id="pomo-timer" style="color:var(--purple)">25:00</div>
+    <div class="pomo-btns">
+      <button class="btn btn-purple" id="pomo-start-btn" onclick="togglePomo()">Iniciar</button>
+      <button class="btn btn-gray" onclick="resetPomo()">Reset</button>
+      <button class="btn btn-gray" onclick="switchPomo()" id="pomo-switch-btn">→ Pausa</button>
+    </div>
+    <div class="card" style="margin-top:24px;text-align:left">
+      <div style="font-weight:500;margin-bottom:8px">Como funciona</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.7">
+        25 minutos de foco total, depois 5 minutos de pausa. A cada 4 sessões, faça uma pausa longa de 15 a 30 minutos. Essa técnica aumenta a concentração e reduz a fadiga mental.
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+// ── STATE ──────────────────────────────────────────────────────────
+var state = {
+  xp: 320,
+  notes: [
+    {id:1,title:"Revisão de Matemática",content:"Fórmula de Bhaskara: x = (-b ± √Δ) / 2a\nDelta: Δ = b² - 4ac",subject:"Matemática",date:"2026-05-01",color:"purple"},
+    {id:2,title:"Figuras de Linguagem",content:"Metáfora, metonímia, hipérbole, antítese, paradoxo...",subject:"Português",date:"2026-05-02",color:"teal"}
+  ],
+  materials: [
+    {id:1,title:"Apostila de História",type:"PDF",subject:"História",date:"2026-04-30",url:"#"},
+    {id:2,title:"Vídeo: Revolução Industrial",type:"Vídeo",subject:"História",date:"2026-05-01",url:"#"}
+  ],
+  flashcards: [
+    {front:"O que é fotossíntese?",back:"Processo pelo qual plantas convertem luz solar em energia química (glicose), usando CO₂ e água.",subject:"Biologia"},
+    {front:"O que é mitose?",back:"Divisão celular que gera duas células filhas geneticamente idênticas à célula-mãe.",subject:"Biologia"},
+    {front:"O que é hipérbole?",back:"Figura de linguagem que consiste no exagero intencional de uma ideia para dar ênfase.",subject:"Português"}
+  ],
+  studyLog: [
+    {date:"2026-04-28",minutes:45,subject:"Matemática"},
+    {date:"2026-04-29",minutes:30,subject:"História"},
+    {date:"2026-04-30",minutes:60,subject:"Biologia"},
+    {date:"2026-05-01",minutes:50,subject:"Português"},
+    {date:"2026-05-02",minutes:25,subject:"Química"}
+  ],
+  fcIdx: 0,
+  fcFlipped: false,
+  quiz: {started:false,questions:[],current:0,answers:[],done:false},
+  pomo: {running:false,seconds:25*60,mode:"work",sessions:0},
+  pomoTimer: null
+};
+
+var questions = [
+  {id:1,q:"Qual é a capital do Brasil?",options:["São Paulo","Rio de Janeiro","Brasília","Salvador"],answer:2,subject:"Geografia"},
+  {id:2,q:"Quanto é 12 × 13?",options:["144","152","156","148"],answer:2,subject:"Matemática"},
+  {id:3,q:"Quem escreveu Dom Casmurro?",options:["José de Alencar","Machado de Assis","Clarice Lispector","Carlos Drummond"],answer:1,subject:"Literatura"},
+  {id:4,q:"Qual é a fórmula da água?",options:["CO2","H2O","NaCl","O2"],answer:1,subject:"Química"},
+  {id:5,q:"Em que ano o Brasil foi descoberto?",options:["1492","1498","1500","1502"],answer:2,subject:"História"}
+];
+
+var noteColors = {purple:"#EEEDFE",teal:"#E1F5EE",coral:"#FAECE7",amber:"#FAEEDA",blue:"#E6F1FB"};
+var noteText   = {purple:"#3C3489",teal:"#085041",coral:"#993C1D",amber:"#854F0B",blue:"#0C447C"};
+var typeIcon   = {PDF:"📄",Vídeo:"▷",Artigo:"✎",Link:"⌁"};
+
+// ── NAV ───────────────────────────────────────────────────────────
+function go(id){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b=>{
+    if(b.textContent.toLowerCase().includes(id.slice(0,4))||
+       (id==='dashboard'&&b.textContent.includes('Dashboard'))||
+       (id==='notas'&&b.textContent.includes('Anota'))||
+       (id==='progresso'&&b.textContent.includes('Progresso'))||
+       (id==='simulado'&&b.textContent.includes('Simulado'))||
+       (id==='flashcards'&&b.textContent.includes('Flash'))||
+       (id==='materiais'&&b.textContent.includes('Mater'))||
+       (id==='pomodoro'&&b.textContent.includes('Pomo')))
+      b.classList.add('active');
+  });
+  if(id==='dashboard') renderDash();
+  if(id==='notas') renderNotes();
+  if(id==='materiais') renderMats();
+  if(id==='flashcards') renderFC();
+  if(id==='progresso') renderProgress();
+  if(id==='simulado') renderQuizStart();
 }
+
+function toggleForm(id){
+  var f=document.getElementById(id);
+  f.style.display=f.style.display==='none'?'block':'none';
+}
+
+// ── XP / LEVEL ────────────────────────────────────────────────────
+function addXP(n){
+  state.xp+=n;
+  updateXP();
+}
+function updateXP(){
+  var lvl=Math.floor(state.xp/100)+1;
+  var inLvl=state.xp%100;
+  document.getElementById('lvl-label').textContent='Nível '+lvl+' · '+inLvl+'/100 XP';
+  document.getElementById('xp-fill').style.width=inLvl+'%';
+}
+
+// ── DASHBOARD ─────────────────────────────────────────────────────
+function renderDash(){
+  var total=state.studyLog.reduce((a,b)=>a+b.minutes,0);
+  document.getElementById('total-min').textContent=total+' min';
+  var lvl=Math.floor(state.xp/100)+1;
+  var stats=[
+    {label:"Anotações",val:state.notes.length,ic:"✎",bg:"#EEEDFE",tc:"#3C3489"},
+    {label:"Materiais",val:state.materials.length,ic:"⊞",bg:"#E1F5EE",tc:"#085041"},
+    {label:"Flashcards",val:state.flashcards.length,ic:"⟳",bg:"#E6F1FB",tc:"#0C447C"},
+    {label:"XP Total",val:state.xp,ic:"▲",bg:"#FAEEDA",tc:"#854F0B"}
+  ];
+  document.getElementById('dash-stats').innerHTML=stats.map(s=>
+    '<div class="stat-card" style="background:'+s.bg+'"><div class="stat-icon">'+s.ic+'</div><div class="stat-val" style="color:'+s.tc+'">'+s.val+'</div><div class="stat-lbl" style="color:'+s.tc+'">'+s.label+'</div></div>'
+  ).join('');
+  var logs=state.studyLog;
+  var max=Math.max(...logs.map(l=>l.minutes));
+  document.getElementById('bar-chart').innerHTML=logs.map(l=>{
+    var h=Math.round((l.minutes/max)*70);
+    return '<div class="bar-col"><div class="bar-val">'+l.minutes+'m</div><div class="bar-rect" style="height:'+h+'px"></div><div class="bar-lbl">'+l.date.slice(5)+'</div></div>';
+  }).join('');
+}
+
+// ── NOTES ─────────────────────────────────────────────────────────
+function renderNotes(){
+  document.getElementById('notes-list').innerHTML=state.notes.map(n=>
+    '<div class="note-card" style="background:'+noteColors[n.color]+';border-left-color:'+noteText[n.color]+'">'
+    +'<div style="display:flex;justify-content:space-between;align-items:flex-start">'
+    +'<div><div style="font-weight:500;margin-bottom:4px;color:'+noteText[n.color]+'">'+n.title+'</div>'
+    +'<div style="font-size:13px;color:#555;white-space:pre-line">'+n.content+'</div></div>'
+    +'<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">'
+    +(n.subject?'<span class="tag" style="background:'+noteText[n.color]+'22;color:'+noteText[n.color]+'">'+n.subject+'</span>':'')
+    +'<span style="font-size:11px;color:#999">'+n.date+'</span></div></div></div>'
+  ).join('');
+}
+function addNote(){
+  var t=document.getElementById('n-title').value.trim();
+  if(!t) return;
+  state.notes.push({id:Date.now(),title:t,content:document.getElementById('n-content').value,subject:document.getElementById('n-subj').value,date:new Date().toISOString().slice(0,10),color:document.getElementById('n-color').value});
+  ['n-title','n-content','n-subj'].forEach(i=>document.getElementById(i).value='');
+  document.getElementById('note-form').style.display='none';
+  addXP(5); renderNotes();
+}
+
+// ── MATERIALS ─────────────────────────────────────────────────────
+function renderMats(){
+  document.getElementById('mat-list').innerHTML=state.materials.map(m=>
+    '<div class="card"><div style="font-size:26px;margin-bottom:8px">'+(typeIcon[m.type]||'⊞')+'</div>'
+    +'<div style="font-weight:500;margin-bottom:6px">'+m.title+'</div>'
+    +'<div style="display:flex;gap:6px;margin-bottom:8px">'
+    +'<span class="tag" style="background:#E1F5EE;color:#085041">'+m.type+'</span>'
+    +(m.subject?'<span class="tag" style="background:#F1EFE8;color:#5F5E5A">'+m.subject+'</span>':'')
+    +'</div><div style="font-size:11px;color:#999">'+m.date+'</div></div>'
+  ).join('');
+}
+function addMat(){
+  var t=document.getElementById('m-title').value.trim();
+  if(!t) return;
+  state.materials.push({id:Date.now(),title:t,type:document.getElementById('m-type').value,subject:document.getElementById('m-subj').value,url:document.getElementById('m-url').value,date:new Date().toISOString().slice(0,10)});
+  ['m-title','m-subj','m-url'].forEach(i=>document.getElementById(i).value='');
+  document.getElementById('mat-form').style.display='none';
+  renderMats();
+}
+
+// ── QUIZ ──────────────────────────────────────────────────────────
+function renderQuizStart(){
+  document.getElementById('quiz-start').style.display='';
+  document.getElementById('quiz-running').style.display='none';
+  document.getElementById('quiz-done').style.display='none';
+  var subjs=[...new Set(questions.map(q=>q.subject))];
+  document.getElementById('quiz-tags').innerHTML=subjs.map(s=>'<span class="tag" style="background:var(--purpleL);color:var(--purpleD);margin-right:6px">'+s+'</span>').join('');
+}
+function startQuiz(){
+  var shuffled=[...questions].sort(()=>Math.random()-.5);
+  state.quiz={started:true,questions:shuffled,current:0,answers:[],done:false};
+  document.getElementById('quiz-start').style.display='none';
+  document.getElementById('quiz-running').style.display='';
+  renderQuestion();
+}
+function renderQuestion(){
+  var q=state.quiz.questions[state.quiz.current];
+  var total=state.quiz.questions.length;
+  document.getElementById('quiz-counter').textContent='Questão '+(state.quiz.current+1)+' de '+total+' · '+q.subject;
+  document.getElementById('quiz-prog').style.width=Math.round((state.quiz.current/total)*100)+'%';
+  document.getElementById('quiz-q').textContent=q.q;
+  document.getElementById('quiz-opts').innerHTML=q.options.map((o,i)=>
+    '<button class="quiz-opt" onclick="answerQ('+i+')"><span style="font-weight:500;margin-right:8px">'+['A','B','C','D'][i]+'.</span>'+o+'</button>'
+  ).join('');
+}
+function answerQ(idx){
+  var q=state.quiz.questions[state.quiz.current];
+  var correct=idx===q.answer;
+  // visual feedback
+  var opts=document.querySelectorAll('.quiz-opt');
+  opts[idx].classList.add(correct?'correct':'wrong');
+  if(!correct) opts[q.answer].classList.add('correct');
+  opts.forEach(o=>o.disabled=true);
+  if(correct) addXP(10);
+  state.quiz.answers.push({qid:q.id,chosen:idx,correct});
+  setTimeout(()=>{
+    if(state.quiz.current+1>=state.quiz.questions.length){
+      showQuizResult();
+    } else {
+      state.quiz.current++;
+      renderQuestion();
+    }
+  },900);
+}
+function showQuizResult(){
+  document.getElementById('quiz-running').style.display='none';
+  document.getElementById('quiz-done').style.display='';
+  var correct=state.quiz.answers.filter(a=>a.correct).length;
+  var pct=Math.round((correct/state.quiz.answers.length)*100);
+  var col=pct>=70?'var(--green)':pct>=50?'var(--amber)':'var(--red)';
+  document.getElementById('quiz-pct').style.color=col;
+  document.getElementById('quiz-pct').textContent=pct+'%';
+  document.getElementById('quiz-summary').textContent=correct+' de '+state.quiz.answers.length+' acertos · +'+(correct*10)+' XP ganhos';
+  document.getElementById('quiz-res-bar').style.width=pct+'%';
+  document.getElementById('quiz-res-bar').style.background=col;
+  document.getElementById('quiz-review').innerHTML=state.quiz.questions.map((q,i)=>{
+    var a=state.quiz.answers[i];
+    var c=a?a.correct:false;
+    return '<div class="review-item" style="background:'+(c?'var(--greenL)':'var(--redL)')+';border-color:'+(c?'var(--green)':'var(--red)')+'"><div style="font-size:13px;font-weight:500;margin-bottom:4px">'+q.q+'</div><div style="font-size:12px;color:'+(c?'var(--green)':'var(--red)')+'">'+( c?'✓ Correto':'✗ Errado')+' — Resposta: '+q.options[q.answer]+'</div></div>';
+  }).join('');
+  state.studyLog.push({date:new Date().toISOString().slice(0,10),minutes:5,subject:"Simulado"});
+}
+function resetQuiz(){renderQuizStart();}
+
+// ── FLASHCARDS ────────────────────────────────────────────────────
+function renderFC(){
+  var fcs=state.flashcards;
+  if(!fcs.length){document.getElementById('fc-card').innerHTML='<div style="color:var(--muted)">Nenhum flashcard. Crie um acima!</div>';return;}
+  var idx=state.fcIdx;
+  var fc=fcs[idx];
+  document.getElementById('fc-label').textContent='Card '+(idx+1)+' de '+fcs.length+(fc.subject?' · '+fc.subject:'');
+  document.getElementById('fc-side').textContent=state.fcFlipped?'RESPOSTA':'PERGUNTA';
+  document.getElementById('fc-text').textContent=state.fcFlipped?fc.back:fc.front;
+  document.getElementById('fc-card').className='fc-card'+(state.fcFlipped?' flipped':'');
+  var hint=document.getElementById('fc-card').querySelector('div>div:last-child');
+  document.getElementById('fc-dots').innerHTML=fcs.map((_,i)=>'<div class="fc-dot'+(i===idx?' active':'')+'" onclick="goFC('+i+')"></div>').join('');
+}
+function flipFC(){state.fcFlipped=!state.fcFlipped;renderFC();}
+function nextFC(){state.fcIdx=(state.fcIdx+1)%state.flashcards.length;state.fcFlipped=false;renderFC();}
+function prevFC(){state.fcIdx=(state.fcIdx-1+state.flashcards.length)%state.flashcards.length;state.fcFlipped=false;renderFC();}
+function goFC(i){state.fcIdx=i;state.fcFlipped=false;renderFC();}
+function addFC(){
+  var f=document.getElementById('fc-front').value.trim();
+  if(!f) return;
+  state.flashcards.push({front:f,back:document.getElementById('fc-back').value,subject:document.getElementById('fc-subj').value});
+  ['fc-front','fc-back','fc-subj'].forEach(i=>document.getElementById(i).value='');
+  document.getElementById('fc-form').style.display='none';
+  addXP(5); renderFC();
+}
+
+// ── PROGRESS ──────────────────────────────────────────────────────
+function renderProgress(){
+  updateXP();
+  var total=state.studyLog.reduce((a,b)=>a+b.minutes,0);
+  var lvl=Math.floor(state.xp/100)+1;
+  var inLvl=state.xp%100;
+  var ps=[
+    {label:"Nível",val:lvl,ic:"▲",bg:"#EEEDFE",tc:"#3C3489"},
+    {label:"XP Total",val:state.xp,ic:"✦",bg:"#FAEEDA",tc:"#854F0B"},
+    {label:"Min estudados",val:total,ic:"◷",bg:"#E1F5EE",tc:"#085041"},
+    {label:"Anotações",val:state.notes.length,ic:"✎",bg:"#E6F1FB",tc:"#0C447C"}
+  ];
+  document.getElementById('prog-stats').innerHTML=ps.map(s=>
+    '<div class="stat-card" style="background:'+s.bg+'"><div class="stat-icon">'+s.ic+'</div><div class="stat-val" style="color:'+s.tc+'">'+s.val+'</div><div class="stat-lbl" style="color:'+s.tc+'">'+s.label+'</div></div>'
+  ).join('');
+  document.getElementById('prog-lvl-label').textContent='Nível '+lvl;
+  document.getElementById('prog-xp-label').textContent=inLvl+'/100 XP';
+  document.getElementById('prog-xp-bar').style.width=inLvl+'%';
+  document.getElementById('total-min').textContent=total+' min';
+  document.getElementById('prog-hist').innerHTML=state.studyLog.map((d,i)=>
+    '<div class="hist-row"><div><span style="font-size:14px;font-weight:500">'+d.subject+'</span><span style="font-size:12px;color:#999;margin-left:8px">'+d.date+'</span></div><span style="font-size:14px;font-weight:500;color:var(--purple)">'+d.minutes+' min</span></div>'
+  ).join('');
+}
+
+// ── POMODORO ──────────────────────────────────────────────────────
+function fmt(s){return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');}
+function updatePomoUI(){
+  var p=state.pomo;
+  document.getElementById('pomo-timer').textContent=fmt(p.seconds);
+  document.getElementById('pomo-timer').style.color=p.mode==='work'?'var(--purple)':'var(--teal)';
+  document.getElementById('pomo-status').textContent=(p.mode==='work'?'Foco':'Pausa')+' · '+p.sessions+' sessões';
+  document.getElementById('pomo-start-btn').textContent=p.running?'Pausar':'Iniciar';
+  document.getElementById('pomo-start-btn').className='btn '+(p.running?'btn-coral':'btn-purple');
+  document.getElementById('pomo-switch-btn').textContent=p.mode==='work'?'→ Pausa':'→ Foco';
+}
+function togglePomo(){
+  state.pomo.running=!state.pomo.running;
+  if(state.pomo.running){
+    state.pomoTimer=setInterval(()=>{
+      if(state.pomo.seconds<=1){
+        clearInterval(state.pomoTimer);
+        var isWork=state.pomo.mode==='work';
+        if(isWork){state.pomo.sessions++;addXP(15);state.studyLog.push({date:new Date().toISOString().slice(0,10),minutes:25,subject:"Pomodoro"});}
+        state.pomo.mode=isWork?'break':'work';
+        state.pomo.seconds=isWork?5*60:25*60;
+        state.pomo.running=false;
+      } else {
+        state.pomo.seconds--;
+      }
+      updatePomoUI();
+    },1000);
+  } else {
+    clearInterval(state.pomoTimer);
+  }
+  updatePomoUI();
+}
+function resetPomo(){
+  clearInterval(state.pomoTimer);
+  state.pomo.running=false;
+  state.pomo.seconds=state.pomo.mode==='work'?25*60:5*60;
+  updatePomoUI();
+}
+function switchPomo(){
+  clearInterval(state.pomoTimer);
+  state.pomo.running=false;
+  state.pomo.mode=state.pomo.mode==='work'?'break':'work';
+  state.pomo.seconds=state.pomo.mode==='work'?25*60:5*60;
+  updatePomoUI();
+}
+
+// ── INIT ──────────────────────────────────────────────────────────
+updateXP();
+renderDash();
+renderNotes();
+renderMats();
+renderFC();
+renderQuizStart();
+updatePomoUI();
+</script>
+</body>
+</html>
