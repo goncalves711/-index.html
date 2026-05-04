@@ -3,82 +3,104 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>StudyPrep</title>
+<title>StudyPrep Pro</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:system-ui,sans-serif;display:flex;height:100vh;overflow:hidden;background:#f8f7f4;color:#1a1a1a}
-:root{--purple:#7F77DD;--purpleL:#EEEDFE;--purpleD:#3C3489;--teal:#1D9E75;--tealL:#E1F5EE;--tealD:#085041;--coral:#D85A30;--coralL:#FAECE7;--amber:#BA7517;--amberL:#FAEEDA;--blue:#378ADD;--blueL:#E6F1FB;--green:#639922;--greenL:#EAF3DE;--red:#E24B4A;--redL:#FCEBEB;--gray:#888780;--grayL:#F1EFE8;--border:#e0ded8;--surface:#fff;--bg:#f8f7f4;--text:#1a1a1a;--muted:#666;--faint:#999}
-#sidebar{width:210px;background:#fff;border-right:0.5px solid var(--border);display:flex;flex-direction:column;padding:1rem 0.5rem;gap:3px;flex-shrink:0;overflow-y:auto}
+body{font-family:system-ui,sans-serif;display:flex;height:100vh;overflow:hidden;transition:background .2s,color .2s}
+body.light{background:#f8f7f4;color:#1a1a1a;--bg:#f8f7f4;--surface:#fff;--surface2:#f3f2ef;--border:#e0ded8;--text:#1a1a1a;--muted:#666;--faint:#aaa}
+body.dark{background:#141414;color:#e8e6e0;--bg:#141414;--surface:#1f1f1f;--surface2:#2a2a2a;--border:#333;--text:#e8e6e0;--muted:#999;--faint:#555}
+:root{--purple:#7F77DD;--purpleL:#2d2b5a;--purpleD:#c4bfff;--teal:#1D9E75;--tealL:#0a3d2e;--tealD:#5dd4a8;--coral:#D85A30;--coralL:#3d1f12;--amber:#BA7517;--amberL:#3d2a08;--blue:#378ADD;--blueL:#0d2a45;--green:#639922;--red:#E24B4A;--gray:#888780}
+body.light{--purpleL:#EEEDFE;--purpleD:#3C3489;--tealL:#E1F5EE;--tealD:#085041;--coralL:#FAECE7;--amberL:#FAEEDA;--blueL:#E6F1FB}
+#sidebar{width:215px;background:var(--surface);border-right:0.5px solid var(--border);display:flex;flex-direction:column;padding:1rem 0.5rem;gap:3px;flex-shrink:0;overflow-y:auto}
 #main{flex:1;overflow-y:auto;padding:1.5rem}
 .logo{padding:0.5rem 0.75rem 1rem}
-.logo-title{font-size:18px;font-weight:500;color:var(--purple)}
-.logo-sub{font-size:12px;color:var(--muted)}
-.xp-bar{height:4px;background:#e8e6e0;border-radius:4px;margin-top:6px}
+.logo-row{display:flex;justify-content:space-between;align-items:center}
+.logo-title{font-size:17px;font-weight:500;color:var(--purple)}
+.logo-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.xp-bar{height:4px;background:var(--border);border-radius:4px;margin-top:6px}
 .xp-fill{height:4px;background:var(--purple);border-radius:4px;transition:width .4s}
-.nav-btn{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;border:none;background:transparent;color:var(--muted);cursor:pointer;font-size:14px;font-weight:400;text-align:left;width:100%;transition:all .15s}
-.nav-btn:hover{background:#f0effc;color:var(--purpleD)}
+.nav-btn{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;border:none;background:transparent;color:var(--muted);cursor:pointer;font-size:13px;font-weight:400;text-align:left;width:100%;transition:all .15s}
+.nav-btn:hover{background:var(--surface2);color:var(--text)}
 .nav-btn.active{background:var(--purpleL);color:var(--purpleD);font-weight:500}
-.nav-icon{font-size:14px}
+.nav-icon{font-size:13px;width:16px;text-align:center}
 .sidebar-footer{margin-top:auto;padding:0.75rem;font-size:12px;color:var(--faint)}
-.sidebar-footer span{font-size:18px;font-weight:500;color:var(--text);display:block}
+.sidebar-footer span{font-size:17px;font-weight:500;color:var(--text);display:block}
 .section{display:none}
 .section.active{display:block}
-h2{font-size:20px;font-weight:500;margin-bottom:1rem}
-.card{background:#fff;border:0.5px solid var(--border);border-radius:12px;padding:1rem 1.25rem;margin-bottom:12px}
+h2{font-size:19px;font-weight:500;margin-bottom:1rem;color:var(--text)}
+.card{background:var(--surface);border:0.5px solid var(--border);border-radius:12px;padding:1rem 1.25rem;margin-bottom:12px}
 .grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:20px}
 .stat-card{border-radius:10px;padding:1rem}
-.stat-icon{font-size:20px;margin-bottom:6px}
-.stat-val{font-size:26px;font-weight:500}
-.stat-lbl{font-size:12px;opacity:.8}
+.stat-icon{font-size:18px;margin-bottom:6px}
+.stat-val{font-size:24px;font-weight:500}
+.stat-lbl{font-size:11px;opacity:.8}
 .row{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
-.btn{border:none;border-radius:8px;padding:8px 16px;cursor:pointer;font-size:14px;font-weight:500;transition:opacity .15s}
+.btn{border:none;border-radius:8px;padding:7px 14px;cursor:pointer;font-size:13px;font-weight:500;transition:opacity .15s}
 .btn:hover{opacity:.85}
 .btn-purple{background:var(--purple);color:#fff}
 .btn-teal{background:var(--teal);color:#fff}
 .btn-blue{background:var(--blue);color:#fff}
-.btn-gray{background:#e8e6e0;color:#555}
+.btn-gray{background:var(--surface2);color:var(--muted);border:0.5px solid var(--border)}
+.btn-red{background:#E24B4A;color:#fff}
 .btn-coral{background:var(--coral);color:#fff}
+.btn-sm{padding:4px 10px;font-size:11px;border-radius:6px}
 .tag{font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;display:inline-block}
-.input{width:100%;border:0.5px solid #ccc;border-radius:8px;padding:8px 10px;font-size:14px;background:#fff;color:#1a1a1a;margin-bottom:8px;outline:none;font-family:inherit}
+.input{width:100%;border:0.5px solid var(--border);border-radius:8px;padding:8px 10px;font-size:13px;background:var(--surface);color:var(--text);margin-bottom:8px;outline:none;font-family:inherit;transition:border .15s}
 .input:focus{border-color:var(--purple)}
 textarea.input{resize:vertical;min-height:70px}
-.form-card{border:1px solid var(--purple);border-radius:12px;padding:1rem 1.25rem;background:#fff;margin-bottom:16px}
+.form-card{border:1px solid var(--purple);border-radius:12px;padding:1rem 1.25rem;background:var(--surface);margin-bottom:16px}
 .note-card{border-radius:12px;padding:1rem 1.25rem;margin-bottom:10px;border-left:3px solid var(--purple)}
 .mat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
-.quick-btns{display:flex;gap:8px;flex-wrap:wrap}
-.progress-bar-wrap{height:10px;background:#e8e6e0;border-radius:10px}
-.progress-bar{height:10px;border-radius:10px;transition:width .4s}
-.quiz-opt{display:block;width:100%;text-align:left;padding:12px 16px;margin-bottom:8px;border-radius:10px;border:0.5px solid #bbb;background:#fff;cursor:pointer;font-size:14px;color:#1a1a1a;transition:background .15s}
-.quiz-opt:hover{background:var(--purpleL)}
-.quiz-opt.correct{background:var(--greenL);border-color:var(--green);color:var(--green)}
-.quiz-opt.wrong{background:var(--redL);border-color:var(--red);color:var(--red)}
-.fc-card{min-height:180px;display:flex;align-items:center;justify-content:center;text-align:center;cursor:pointer;font-size:16px;border-radius:12px;border:0.5px solid var(--border);padding:2rem;background:#fff;transition:background .2s;user-select:none}
+.progress-bar-wrap{height:8px;background:var(--surface2);border-radius:8px}
+.progress-bar{height:8px;border-radius:8px;transition:width .4s}
+.quiz-opt{display:block;width:100%;text-align:left;padding:11px 16px;margin-bottom:8px;border-radius:10px;border:0.5px solid var(--border);background:var(--surface);cursor:pointer;font-size:13px;color:var(--text);transition:background .15s}
+.quiz-opt:hover:not(:disabled){background:var(--purpleL)}
+.quiz-opt.correct{background:#E1F5EE;border-color:var(--teal);color:var(--teal)}
+.quiz-opt.wrong{background:#FCEBEB;border-color:var(--red);color:var(--red)}
+body.dark .quiz-opt.correct{background:#0a3d2e;color:#5dd4a8}
+body.dark .quiz-opt.wrong{background:#3d1010;color:#f09595}
+.fc-card{min-height:170px;display:flex;align-items:center;justify-content:center;text-align:center;cursor:pointer;font-size:15px;border-radius:12px;border:0.5px solid var(--border);padding:2rem;background:var(--surface);transition:background .2s;user-select:none}
 .fc-card.flipped{background:var(--blueL)}
 .fc-dots{display:flex;gap:6px;justify-content:center;margin-top:8px}
-.fc-dot{width:8px;height:8px;border-radius:50%;background:#ccc;cursor:pointer;transition:background .15s}
+.fc-dot{width:8px;height:8px;border-radius:50%;background:var(--border);cursor:pointer;transition:background .15s}
 .fc-dot.active{background:var(--blue)}
-.pomo-big{font-size:64px;font-weight:500;font-variant-numeric:tabular-nums;text-align:center;padding:2rem;border-radius:12px;border:0.5px solid var(--border);background:#fff;margin-bottom:16px;transition:color .3s}
+.pomo-big{font-size:60px;font-weight:500;font-variant-numeric:tabular-nums;text-align:center;padding:2rem;border-radius:12px;border:0.5px solid var(--border);background:var(--surface);margin-bottom:16px}
 .pomo-btns{display:flex;gap:8px;justify-content:center}
 .bar-wrap{display:flex;gap:6px;align-items:flex-end;height:90px;margin-top:8px}
 .bar-col{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1}
-.bar-rect{background:var(--purple);border-radius:4px;width:100%;opacity:.8;transition:height .4s}
+.bar-rect{background:var(--purple);border-radius:4px;width:100%;opacity:.75}
 .bar-lbl{font-size:10px;color:var(--faint)}
 .bar-val{font-size:10px;color:var(--muted)}
 .review-item{border-radius:8px;padding:10px 14px;margin-bottom:6px;border-left:3px solid}
 .hist-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:0.5px solid var(--border)}
 .hist-row:last-child{border-bottom:none}
-.result-big{font-size:48px;font-weight:500;margin-bottom:8px}
+.result-big{font-size:46px;font-weight:500;margin-bottom:8px}
+.dark-toggle{background:transparent;border:0.5px solid var(--border);border-radius:20px;padding:4px 10px;cursor:pointer;font-size:13px;color:var(--muted)}
+.dark-toggle:hover{background:var(--surface2)}
+.news-card{background:var(--surface);border:0.5px solid var(--border);border-radius:12px;padding:1rem 1.25rem;margin-bottom:10px;transition:border .2s}
+.news-card:hover{border-color:var(--purple)}
+.news-badge{font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px;display:inline-block;margin-right:6px}
+.del-btn{background:transparent;border:none;color:var(--faint);cursor:pointer;font-size:14px;padding:2px 6px;border-radius:4px;transition:color .15s}
+.del-btn:hover{color:var(--red)}
+.item-row{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.spinner{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--purple);border-radius:50%;animation:spin 0.7s linear infinite;display:inline-block;vertical-align:middle;margin-right:8px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.news-loading{color:var(--muted);font-size:14px;padding:1rem;text-align:center}
 </style>
 </head>
-<body>
+<body class="light">
 
 <div id="sidebar">
   <div class="logo">
-    <div class="logo-title">StudyPrep</div>
+    <div class="logo-row">
+      <div class="logo-title">StudyPrep Pro</div>
+      <button class="dark-toggle" onclick="toggleDark()" id="dark-btn">🌙</button>
+    </div>
     <div class="logo-sub" id="lvl-label">Nível 1 · 0/100 XP</div>
     <div class="xp-bar"><div class="xp-fill" id="xp-fill" style="width:0%"></div></div>
   </div>
   <button class="nav-btn active" onclick="go('dashboard')"><span class="nav-icon">◈</span>Dashboard</button>
+  <button class="nav-btn" onclick="go('noticias')"><span class="nav-icon">📰</span>Notícias</button>
   <button class="nav-btn" onclick="go('notas')"><span class="nav-icon">✎</span>Anotações</button>
   <button class="nav-btn" onclick="go('materiais')"><span class="nav-icon">⊞</span>Materiais</button>
   <button class="nav-btn" onclick="go('simulado')"><span class="nav-icon">✦</span>Simulado</button>
@@ -95,18 +117,35 @@ textarea.input{resize:vertical;min-height:70px}
   <h2>Bem-vindo de volta!</h2>
   <div class="grid4" id="dash-stats"></div>
   <div class="card">
-    <div style="font-weight:500;margin-bottom:12px">Histórico de estudo</div>
+    <div style="font-weight:500;margin-bottom:12px;font-size:14px">Histórico de estudo</div>
     <div class="bar-wrap" id="bar-chart"></div>
   </div>
   <div class="card">
-    <div style="font-weight:500;margin-bottom:10px">Acesso rápido</div>
-    <div class="quick-btns">
-      <button class="btn btn-purple" onclick="go('simulado')">✦ Novo simulado</button>
-      <button class="btn btn-purple" onclick="go('flashcards')">⟳ Flashcards</button>
-      <button class="btn btn-purple" onclick="go('notas')">✎ Nova anotação</button>
+    <div style="font-weight:500;margin-bottom:10px;font-size:14px">Acesso rápido</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-purple" onclick="go('noticias')">📰 Notícias do dia</button>
+      <button class="btn btn-purple" onclick="go('simulado')">✦ Simulado</button>
+      <button class="btn btn-purple" onclick="go('notas')">✎ Anotações</button>
       <button class="btn btn-purple" onclick="go('pomodoro')">◷ Pomodoro</button>
     </div>
   </div>
+</div>
+
+<!-- NOTICIAS -->
+<div id="sec-noticias" class="section">
+  <div class="row">
+    <h2 style="margin:0">Notícias do Dia</h2>
+    <button class="btn btn-purple" onclick="loadNews()" id="news-refresh-btn">↻ Atualizar</button>
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px" id="news-filters">
+    <button class="btn btn-gray btn-sm active-filter" onclick="filterNews('all',this)">Todas</button>
+    <button class="btn btn-gray btn-sm" onclick="filterNews('tributario',this)">Tributário</button>
+    <button class="btn btn-gray btn-sm" onclick="filterNews('contabil',this)">Contábil</button>
+    <button class="btn btn-gray btn-sm" onclick="filterNews('financeiro',this)">Financeiro</button>
+    <button class="btn btn-gray btn-sm" onclick="filterNews('reforma',this)">Reforma Tributária</button>
+    <button class="btn btn-gray btn-sm" onclick="filterNews('economia',this)">Economia</button>
+  </div>
+  <div id="news-list"><div class="news-loading"><span class="spinner"></span>Carregando notícias...</div></div>
 </div>
 
 <!-- NOTAS -->
@@ -117,7 +156,7 @@ textarea.input{resize:vertical;min-height:70px}
   </div>
   <div id="note-form" class="form-card" style="display:none">
     <input class="input" id="n-title" placeholder="Título"/>
-    <input class="input" id="n-subj" placeholder="Disciplina"/>
+    <input class="input" id="n-subj" placeholder="Disciplina / Área"/>
     <select class="input" id="n-color">
       <option value="purple">Roxo</option>
       <option value="teal">Verde</option>
@@ -142,9 +181,9 @@ textarea.input{resize:vertical;min-height:70px}
   </div>
   <div id="mat-form" class="form-card" style="display:none;border-color:var(--teal)">
     <input class="input" id="m-title" placeholder="Título do material"/>
-    <input class="input" id="m-subj" placeholder="Disciplina"/>
+    <input class="input" id="m-subj" placeholder="Área / Disciplina"/>
     <select class="input" id="m-type">
-      <option>PDF</option><option>Vídeo</option><option>Artigo</option><option>Link</option>
+      <option>PDF</option><option>Vídeo</option><option>Artigo</option><option>Link</option><option>Legislação</option><option>Resolução</option>
     </select>
     <input class="input" id="m-url" placeholder="URL ou referência"/>
     <div style="display:flex;gap:8px">
@@ -160,27 +199,25 @@ textarea.input{resize:vertical;min-height:70px}
   <h2>Simulado</h2>
   <div id="quiz-start">
     <div class="card">
-      <div style="font-size:15px;margin-bottom:12px;color:var(--muted)">5 questões · Múltipla escolha · +10 XP por acerto</div>
+      <div style="font-size:14px;margin-bottom:12px;color:var(--muted)">5 questões · Múltipla escolha · +10 XP por acerto</div>
       <div style="margin-bottom:16px" id="quiz-tags"></div>
       <button class="btn btn-purple" onclick="startQuiz()">Iniciar simulado</button>
     </div>
   </div>
   <div id="quiz-running" style="display:none">
     <div style="font-size:13px;color:var(--muted);margin-bottom:6px" id="quiz-counter"></div>
-    <div style="height:4px;background:#e8e6e0;border-radius:4px;margin-bottom:20px">
+    <div style="height:4px;background:var(--surface2);border-radius:4px;margin-bottom:20px">
       <div id="quiz-prog" style="height:4px;background:var(--purple);border-radius:4px;transition:width .3s;width:0%"></div>
     </div>
-    <div class="card" id="quiz-q" style="font-size:16px;font-weight:500;margin-bottom:16px"></div>
+    <div class="card" id="quiz-q" style="font-size:15px;font-weight:500;margin-bottom:14px"></div>
     <div id="quiz-opts"></div>
   </div>
   <div id="quiz-done" style="display:none">
     <div class="card" style="text-align:center">
-      <div style="font-weight:500;margin-bottom:8px;font-size:18px">Resultado</div>
+      <div style="font-weight:500;margin-bottom:8px;font-size:17px">Resultado</div>
       <div class="result-big" id="quiz-pct"></div>
       <div style="color:var(--muted);margin-bottom:16px" id="quiz-summary"></div>
-      <div class="progress-bar-wrap" style="margin-bottom:20px">
-        <div class="progress-bar" id="quiz-res-bar"></div>
-      </div>
+      <div class="progress-bar-wrap" style="margin-bottom:20px"><div class="progress-bar" id="quiz-res-bar"></div></div>
     </div>
     <div id="quiz-review"></div>
     <button class="btn btn-purple" onclick="resetQuiz()" style="margin-top:12px">Novo simulado</button>
@@ -194,9 +231,9 @@ textarea.input{resize:vertical;min-height:70px}
     <button class="btn btn-blue" onclick="toggleForm('fc-form')">+ Novo</button>
   </div>
   <div id="fc-form" class="form-card" style="display:none;border-color:var(--blue)">
-    <input class="input" id="fc-front" placeholder="Frente (pergunta)"/>
-    <textarea class="input" id="fc-back" placeholder="Verso (resposta)"></textarea>
-    <input class="input" id="fc-subj" placeholder="Disciplina"/>
+    <input class="input" id="fc-front" placeholder="Frente (pergunta ou conceito)"/>
+    <textarea class="input" id="fc-back" placeholder="Verso (resposta ou definição)"></textarea>
+    <input class="input" id="fc-subj" placeholder="Área"/>
     <div style="display:flex;gap:8px">
       <button class="btn btn-blue" onclick="addFC()">Criar</button>
       <button class="btn btn-gray" onclick="toggleForm('fc-form')">Cancelar</button>
@@ -206,12 +243,13 @@ textarea.input{resize:vertical;min-height:70px}
   <div class="fc-card" id="fc-card" onclick="flipFC()">
     <div>
       <div style="font-size:11px;color:var(--faint);margin-bottom:12px" id="fc-side">PERGUNTA</div>
-      <div id="fc-text"></div>
+      <div id="fc-text" style="line-height:1.6"></div>
       <div style="font-size:11px;color:var(--faint);margin-top:14px">toque para revelar</div>
     </div>
   </div>
   <div style="display:flex;gap:8px;justify-content:center;margin-top:14px">
     <button class="btn btn-gray" onclick="prevFC()">← Anterior</button>
+    <button class="btn btn-red btn-sm" onclick="deleteFC()" style="align-self:center">🗑 Excluir</button>
     <button class="btn btn-blue" onclick="nextFC()">Próximo →</button>
   </div>
   <div class="fc-dots" id="fc-dots"></div>
@@ -222,23 +260,21 @@ textarea.input{resize:vertical;min-height:70px}
   <h2>Seu Progresso</h2>
   <div class="grid4" id="prog-stats"></div>
   <div class="card">
-    <div style="font-weight:500;margin-bottom:8px">Progresso de nível</div>
-    <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-bottom:6px">
+    <div style="font-weight:500;margin-bottom:8px;font-size:14px">Progresso de nível</div>
+    <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:6px">
       <span id="prog-lvl-label">Nível 1</span><span id="prog-xp-label">0/100 XP</span>
     </div>
-    <div class="progress-bar-wrap">
-      <div class="progress-bar" id="prog-xp-bar" style="background:var(--purple)"></div>
-    </div>
+    <div class="progress-bar-wrap"><div class="progress-bar" id="prog-xp-bar" style="background:var(--purple)"></div></div>
   </div>
   <div class="card">
-    <div style="font-weight:500;margin-bottom:12px">Histórico de estudo</div>
+    <div style="font-weight:500;margin-bottom:12px;font-size:14px">Histórico de estudo</div>
     <div id="prog-hist"></div>
   </div>
 </div>
 
 <!-- POMODORO -->
 <div id="sec-pomodoro" class="section">
-  <div style="max-width:400px;margin:0 auto;text-align:center">
+  <div style="max-width:420px;margin:0 auto;text-align:center">
     <h2 style="margin-bottom:4px">Pomodoro</h2>
     <div style="font-size:13px;color:var(--muted);margin-bottom:24px" id="pomo-status">Foco · 0 sessões</div>
     <div class="pomo-big" id="pomo-timer" style="color:var(--purple)">25:00</div>
@@ -248,96 +284,130 @@ textarea.input{resize:vertical;min-height:70px}
       <button class="btn btn-gray" onclick="switchPomo()" id="pomo-switch-btn">→ Pausa</button>
     </div>
     <div class="card" style="margin-top:24px;text-align:left">
-      <div style="font-weight:500;margin-bottom:8px">Como funciona</div>
-      <div style="font-size:13px;color:var(--muted);line-height:1.7">
-        25 minutos de foco total, depois 5 minutos de pausa. A cada 4 sessões, faça uma pausa longa de 15 a 30 minutos. Essa técnica aumenta a concentração e reduz a fadiga mental.
-      </div>
+      <div style="font-weight:500;margin-bottom:8px;font-size:14px">Como funciona</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.7">25 minutos de foco total, depois 5 minutos de pausa. A cada 4 sessões, faça uma pausa longa de 15 a 30 minutos.</div>
     </div>
   </div>
 </div>
 
-</div><!-- /main -->
+</div>
 
 <script>
 // ── STATE ──────────────────────────────────────────────────────────
+var isDark = false;
 var state = {
   xp: 320,
   notes: [
-    {id:1,title:"Revisão de Matemática",content:"Fórmula de Bhaskara: x = (-b ± √Δ) / 2a\nDelta: Δ = b² - 4ac",subject:"Matemática",date:"2026-05-01",color:"purple"},
-    {id:2,title:"Figuras de Linguagem",content:"Metáfora, metonímia, hipérbole, antítese, paradoxo...",subject:"Português",date:"2026-05-02",color:"teal"}
+    {id:1,title:"Reforma Tributária — Pontos Principais",content:"IBS substitui ICMS e ISS. CBS substitui PIS/Cofins. Imposto Seletivo sobre produtos prejudiciais. Período de transição: 2026–2033.",subject:"Reforma Tributária",date:"2026-05-01",color:"purple"},
+    {id:2,title:"Obrigações Acessórias — Prazos Maio",content:"DCTF: até dia 15\nSPED Fiscal: até dia 20\nEFD Contribuições: até dia 10\nGIA: até dia 25",subject:"Contabilidade",date:"2026-05-02",color:"teal"},
+    {id:3,title:"Conceitos de Valuation",content:"EBITDA, P/L, EV/EBITDA, DCF. Fluxo de caixa descontado = principal método para empresas de capital fechado.",subject:"Finanças",date:"2026-05-02",color:"blue"}
   ],
   materials: [
-    {id:1,title:"Apostila de História",type:"PDF",subject:"História",date:"2026-04-30",url:"#"},
-    {id:2,title:"Vídeo: Revolução Industrial",type:"Vídeo",subject:"História",date:"2026-05-01",url:"#"}
+    {id:1,title:"LC 214/2024 — Reforma Tributária",type:"Legislação",subject:"Reforma Tributária",date:"2026-04-30",url:"#"},
+    {id:2,title:"CFC — NBC TG 1000",type:"Resolução",subject:"Contabilidade",date:"2026-05-01",url:"#"},
+    {id:3,title:"Manual do SPED 2026",type:"PDF",subject:"Obrigações",date:"2026-05-02",url:"#"}
   ],
   flashcards: [
-    {front:"O que é fotossíntese?",back:"Processo pelo qual plantas convertem luz solar em energia química (glicose), usando CO₂ e água.",subject:"Biologia"},
-    {front:"O que é mitose?",back:"Divisão celular que gera duas células filhas geneticamente idênticas à célula-mãe.",subject:"Biologia"},
-    {front:"O que é hipérbole?",back:"Figura de linguagem que consiste no exagero intencional de uma ideia para dar ênfase.",subject:"Português"}
+    {front:"O que é o IBS?",back:"Imposto sobre Bens e Serviços — substitui ICMS (estadual) e ISS (municipal) na Reforma Tributária.",subject:"Reforma Tributária"},
+    {front:"O que é a CBS?",back:"Contribuição sobre Bens e Serviços — substitui PIS e Cofins, de competência federal.",subject:"Reforma Tributária"},
+    {front:"O que é EBITDA?",back:"Earnings Before Interest, Taxes, Depreciation and Amortization. Lucro antes de juros, impostos, depreciação e amortização.",subject:"Finanças"},
+    {front:"O que é o Simples Nacional?",back:"Regime tributário simplificado para ME e EPP. Unifica 8 tributos em uma única guia (DAS).",subject:"Tributário"},
+    {front:"O que é Lucro Presumido?",back:"Regime tributário onde a base de cálculo do IRPJ e CSLL é presumida por percentuais definidos em lei, conforme a atividade.",subject:"Tributário"}
   ],
   studyLog: [
-    {date:"2026-04-28",minutes:45,subject:"Matemática"},
-    {date:"2026-04-29",minutes:30,subject:"História"},
-    {date:"2026-04-30",minutes:60,subject:"Biologia"},
-    {date:"2026-05-01",minutes:50,subject:"Português"},
-    {date:"2026-05-02",minutes:25,subject:"Química"}
+    {date:"2026-04-28",minutes:45,subject:"Reforma Tributária"},
+    {date:"2026-04-29",minutes:30,subject:"Finanças"},
+    {date:"2026-04-30",minutes:60,subject:"Contabilidade"},
+    {date:"2026-05-01",minutes:50,subject:"Tributário"},
+    {date:"2026-05-02",minutes:25,subject:"Auditoria"}
   ],
-  fcIdx: 0,
-  fcFlipped: false,
-  quiz: {started:false,questions:[],current:0,answers:[],done:false},
-  pomo: {running:false,seconds:25*60,mode:"work",sessions:0},
-  pomoTimer: null
+  fcIdx:0, fcFlipped:false,
+  quiz:{started:false,questions:[],current:0,answers:[],done:false},
+  pomo:{running:false,seconds:25*60,mode:"work",sessions:0},
+  pomoTimer:null,
+  newsFilter:"all",
+  news:[]
 };
 
 var questions = [
-  {id:1,q:"Qual é a capital do Brasil?",options:["São Paulo","Rio de Janeiro","Brasília","Salvador"],answer:2,subject:"Geografia"},
-  {id:2,q:"Quanto é 12 × 13?",options:["144","152","156","148"],answer:2,subject:"Matemática"},
-  {id:3,q:"Quem escreveu Dom Casmurro?",options:["José de Alencar","Machado de Assis","Clarice Lispector","Carlos Drummond"],answer:1,subject:"Literatura"},
-  {id:4,q:"Qual é a fórmula da água?",options:["CO2","H2O","NaCl","O2"],answer:1,subject:"Química"},
-  {id:5,q:"Em que ano o Brasil foi descoberto?",options:["1492","1498","1500","1502"],answer:2,subject:"História"}
+  {id:1,q:"Qual tributo o IBS substitui na Reforma Tributária?",options:["PIS e Cofins","IRPJ e CSLL","ICMS e ISS","IOF e CIDE"],answer:2,subject:"Reforma Tributária"},
+  {id:2,q:"Qual é o percentual de presunção do IRPJ para atividades comerciais no Lucro Presumido?",options:["1,6%","8%","32%","16%"],answer:1,subject:"Tributário"},
+  {id:3,q:"O SPED foi instituído pelo Decreto nº:",options:["6.022/2007","7.212/2010","8.451/2015","5.940/2006"],answer:0,subject:"Contabilidade"},
+  {id:4,q:"O que significa a sigla CFC?",options:["Conselho Federal de Contabilidade","Câmara Fiscal e Contábil","Centro Financeiro e Comercial","Comitê Federal de Custos"],answer:0,subject:"Contabilidade"},
+  {id:5,q:"No Simples Nacional, quantos tributos são unificados no DAS?",options:["5","6","8","10"],answer:2,subject:"Tributário"},
+  {id:6,q:"A alíquota padrão do CBS prevista na Reforma Tributária é de aproximadamente:",options:["4,5%","8,8%","12%","9,9%"],answer:3,subject:"Reforma Tributária"},
+  {id:7,q:"O que é o Imposto Seletivo previsto na Reforma Tributária?",options:["Substituto do IR","Tributo sobre produtos prejudiciais à saúde/ambiente","Taxa sobre exportações","Novo imposto sobre patrimônio"],answer:1,subject:"Reforma Tributária"}
 ];
 
-var noteColors = {purple:"#EEEDFE",teal:"#E1F5EE",coral:"#FAECE7",amber:"#FAEEDA",blue:"#E6F1FB"};
-var noteText   = {purple:"#3C3489",teal:"#085041",coral:"#993C1D",amber:"#854F0B",blue:"#0C447C"};
-var typeIcon   = {PDF:"📄",Vídeo:"▷",Artigo:"✎",Link:"⌁"};
+var newsData = [
+  {id:1,title:"Reforma Tributária: regulamentação do IBS avança no Congresso",summary:"O Comitê Gestor do IBS divulgou novas diretrizes sobre a transição do ICMS e ISS. Empresas terão prazo diferenciado para adaptação dos sistemas de nota fiscal.",category:"reforma",source:"Valor Econômico",date:"02/05/2026",url:"#",important:true},
+  {id:2,title:"Receita Federal publica novo manual do eSocial para 2026",summary:"Atualização inclui novos eventos de segurança e saúde do trabalho, além de alterações nos leiautes de folha de pagamento. Vigência a partir de julho.",category:"contabil",source:"Receita Federal",date:"02/05/2026",url:"#",important:false},
+  {id:3,title:"Selic mantida em 13,25% ao ano pelo Copom",summary:"O Comitê de Política Monetária manteve a taxa básica de juros inalterada pela segunda reunião consecutiva, sinalizando cautela diante da inflação em 4,1%.",category:"financeiro",source:"Banco Central",date:"02/05/2026",url:"#",important:true},
+  {id:4,title:"CFC atualiza NBC TG 48 sobre instrumentos financeiros",summary:"A nova resolução alinha as normas brasileiras ao IFRS 9 revisado. Empresas de capital aberto devem implementar até o exercício de 2027.",category:"contabil",source:"CFC",date:"01/05/2026",url:"#",important:false},
+  {id:5,title:"CBS: empresas do Simples terão alíquota reduzida na transição",summary:"Medida provisória garante redução gradual para micro e pequenas empresas durante o período de transição de 2026 a 2029 da Reforma Tributária.",category:"reforma",source:"Agência Brasil",date:"01/05/2026",url:"#",important:true},
+  {id:6,title:"PGFN abre novo programa de parcelamento de dívidas tributárias",summary:"O Programa de Regularização Tributária permite parcelamento em até 120 meses com desconto de multas e juros para empresas com dívidas de até R$ 50 milhões.",category:"tributario",source:"PGFN",date:"01/05/2026",url:"#",important:false},
+  {id:7,title:"IPCA de abril fecha em 0,38%; acumulado em 4,12% no ano",summary:"O índice oficial de inflação ficou abaixo das estimativas do mercado. Alimentação e habitação foram os principais vetores de alta no período.",category:"economia",source:"IBGE",date:"30/04/2026",url:"#",important:false},
+  {id:8,title:"Nota Fiscal Eletrônica ganha novo layout para serviços em 2026",summary:"A NFS-e Nacional passa a ser obrigatória para municípios com mais de 50 mil habitantes a partir de agosto, unificando a emissão em plataforma única.",category:"tributario",source:"SEFAZ",date:"30/04/2026",url:"#",important:false},
+  {id:9,title:"Dólar fecha semana a R$ 5,62 com pressão externa",summary:"A moeda americana valorizou diante de incertezas no comércio global. Impacto direto em empresas importadoras e contratos indexados em moeda estrangeira.",category:"financeiro",source:"B3",date:"30/04/2026",url:"#",important:false},
+  {id:10,title:"Prazo para entrega da ECD encerra em 31 de maio",summary:"A Escrituração Contábil Digital deve ser transmitida até o último dia útil de maio. Multa por atraso é de R$ 500 por mês-calendário para empresas optantes do Lucro Real.",category:"contabil",source:"SPED",date:"29/04/2026",url:"#",important:true}
+];
+
+var catColors = {
+  reforma:{bg:"#EEEDFE",tc:"#3C3489",label:"Reforma Tributária"},
+  tributario:{bg:"#E1F5EE",tc:"#085041",label:"Tributário"},
+  contabil:{bg:"#E6F1FB",tc:"#0C447C",label:"Contábil"},
+  financeiro:{bg:"#FAEEDA",tc:"#854F0B",label:"Financeiro"},
+  economia:{bg:"#EAF3DE",tc:"#27500A",label:"Economia"}
+};
+var catColorsDark = {
+  reforma:{bg:"#2d2b5a",tc:"#c4bfff"},
+  tributario:{bg:"#0a3d2e",tc:"#5dd4a8"},
+  contabil:{bg:"#0d2a45",tc:"#7bbcf0"},
+  financeiro:{bg:"#3d2a08",tc:"#f5c775"},
+  economia:{bg:"#1e3308",tc:"#a3d060"}
+};
+var noteColorsL = {purple:"#EEEDFE",teal:"#E1F5EE",coral:"#FAECE7",amber:"#FAEEDA",blue:"#E6F1FB"};
+var noteColorsD = {purple:"#2d2b5a",teal:"#0a3d2e",coral:"#3d1f12",amber:"#3d2a08",blue:"#0d2a45"};
+var noteTextL   = {purple:"#3C3489",teal:"#085041",coral:"#993C1D",amber:"#854F0B",blue:"#0C447C"};
+var noteTextD   = {purple:"#c4bfff",teal:"#5dd4a8",coral:"#f0a07a",amber:"#f5c775",blue:"#7bbcf0"};
+var typeIcon    = {PDF:"📄",Vídeo:"▶",Artigo:"✎",Link:"🔗",Legislação:"⚖",Resolução:"📋"};
+
+// ── DARK MODE ─────────────────────────────────────────────────────
+function toggleDark(){
+  isDark=!isDark;
+  document.body.className=isDark?'dark':'light';
+  document.getElementById('dark-btn').textContent=isDark?'☀️':'🌙';
+  var cur=document.querySelector('.section.active');
+  if(cur) refreshCurrent(cur.id.replace('sec-',''));
+}
+function nc(c){return isDark?(noteColorsD[c]||noteColorsD.purple):(noteColorsL[c]||noteColorsL.purple);}
+function nt(c){return isDark?(noteTextD[c]||noteTextD.purple):(noteTextL[c]||noteTextL.purple);}
+function cc(cat){return isDark?(catColorsDark[cat]||catColorsDark.tributario):(catColors[cat]||catColors.tributario);}
 
 // ── NAV ───────────────────────────────────────────────────────────
+var secMap={'dashboard':'Dashboard','noticias':'Notícias','notas':'Anota','materiais':'Mater','simulado':'Simulado','flashcards':'Flash','progresso':'Progresso','pomodoro':'Pomo'};
 function go(id){
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('sec-'+id).classList.add('active');
-  document.querySelectorAll('.nav-btn').forEach(b=>{
-    if(b.textContent.toLowerCase().includes(id.slice(0,4))||
-       (id==='dashboard'&&b.textContent.includes('Dashboard'))||
-       (id==='notas'&&b.textContent.includes('Anota'))||
-       (id==='progresso'&&b.textContent.includes('Progresso'))||
-       (id==='simulado'&&b.textContent.includes('Simulado'))||
-       (id==='flashcards'&&b.textContent.includes('Flash'))||
-       (id==='materiais'&&b.textContent.includes('Mater'))||
-       (id==='pomodoro'&&b.textContent.includes('Pomo')))
-      b.classList.add('active');
-  });
+  document.querySelectorAll('.nav-btn').forEach(b=>{if(b.textContent.includes(secMap[id]||id))b.classList.add('active');});
+  refreshCurrent(id);
+}
+function refreshCurrent(id){
   if(id==='dashboard') renderDash();
   if(id==='notas') renderNotes();
   if(id==='materiais') renderMats();
   if(id==='flashcards') renderFC();
   if(id==='progresso') renderProgress();
   if(id==='simulado') renderQuizStart();
+  if(id==='noticias') renderNews();
 }
+function toggleForm(id){var f=document.getElementById(id);f.style.display=f.style.display==='none'?'block':'none';}
 
-function toggleForm(id){
-  var f=document.getElementById(id);
-  f.style.display=f.style.display==='none'?'block':'none';
-}
-
-// ── XP / LEVEL ────────────────────────────────────────────────────
-function addXP(n){
-  state.xp+=n;
-  updateXP();
-}
+// ── XP ────────────────────────────────────────────────────────────
+function addXP(n){state.xp+=n;updateXP();}
 function updateXP(){
-  var lvl=Math.floor(state.xp/100)+1;
-  var inLvl=state.xp%100;
+  var lvl=Math.floor(state.xp/100)+1,inLvl=state.xp%100;
   document.getElementById('lvl-label').textContent='Nível '+lvl+' · '+inLvl+'/100 XP';
   document.getElementById('xp-fill').style.width=inLvl+'%';
 }
@@ -348,62 +418,99 @@ function renderDash(){
   document.getElementById('total-min').textContent=total+' min';
   var lvl=Math.floor(state.xp/100)+1;
   var stats=[
-    {label:"Anotações",val:state.notes.length,ic:"✎",bg:"#EEEDFE",tc:"#3C3489"},
-    {label:"Materiais",val:state.materials.length,ic:"⊞",bg:"#E1F5EE",tc:"#085041"},
-    {label:"Flashcards",val:state.flashcards.length,ic:"⟳",bg:"#E6F1FB",tc:"#0C447C"},
-    {label:"XP Total",val:state.xp,ic:"▲",bg:"#FAEEDA",tc:"#854F0B"}
+    {label:"Anotações",val:state.notes.length,ic:"✎",bg:isDark?"#2d2b5a":"#EEEDFE",tc:isDark?"#c4bfff":"#3C3489"},
+    {label:"Materiais",val:state.materials.length,ic:"⊞",bg:isDark?"#0a3d2e":"#E1F5EE",tc:isDark?"#5dd4a8":"#085041"},
+    {label:"Flashcards",val:state.flashcards.length,ic:"⟳",bg:isDark?"#0d2a45":"#E6F1FB",tc:isDark?"#7bbcf0":"#0C447C"},
+    {label:"XP Total",val:state.xp,ic:"▲",bg:isDark?"#3d2a08":"#FAEEDA",tc:isDark?"#f5c775":"#854F0B"}
   ];
-  document.getElementById('dash-stats').innerHTML=stats.map(s=>
-    '<div class="stat-card" style="background:'+s.bg+'"><div class="stat-icon">'+s.ic+'</div><div class="stat-val" style="color:'+s.tc+'">'+s.val+'</div><div class="stat-lbl" style="color:'+s.tc+'">'+s.label+'</div></div>'
-  ).join('');
-  var logs=state.studyLog;
-  var max=Math.max(...logs.map(l=>l.minutes));
-  document.getElementById('bar-chart').innerHTML=logs.map(l=>{
-    var h=Math.round((l.minutes/max)*70);
-    return '<div class="bar-col"><div class="bar-val">'+l.minutes+'m</div><div class="bar-rect" style="height:'+h+'px"></div><div class="bar-lbl">'+l.date.slice(5)+'</div></div>';
+  document.getElementById('dash-stats').innerHTML=stats.map(s=>'<div class="stat-card" style="background:'+s.bg+'"><div class="stat-icon">'+s.ic+'</div><div class="stat-val" style="color:'+s.tc+'">'+s.val+'</div><div class="stat-lbl" style="color:'+s.tc+'">'+s.label+'</div></div>').join('');
+  var logs=state.studyLog,max=Math.max(...logs.map(l=>l.minutes));
+  document.getElementById('bar-chart').innerHTML=logs.map(l=>{var h=Math.round((l.minutes/max)*70);return '<div class="bar-col"><div class="bar-val">'+l.minutes+'m</div><div class="bar-rect" style="height:'+h+'px"></div><div class="bar-lbl">'+l.date.slice(5)+'</div></div>';}).join('');
+}
+
+// ── NOTICIAS ──────────────────────────────────────────────────────
+function loadNews(){
+  document.getElementById('news-list').innerHTML='<div class="news-loading"><span class="spinner"></span>Carregando notícias...</div>';
+  setTimeout(()=>{state.news=newsData;renderNews();},1200);
+}
+function filterNews(cat,btn){
+  state.newsFilter=cat;
+  document.querySelectorAll('#news-filters .btn').forEach(b=>b.style.background='');
+  document.querySelectorAll('#news-filters .btn').forEach(b=>b.style.color='');
+  btn.style.background='var(--purple)';btn.style.color='#fff';
+  renderNews();
+}
+function renderNews(){
+  if(!state.news.length){loadNews();return;}
+  var list=state.newsFilter==='all'?state.news:state.news.filter(n=>n.category===state.newsFilter);
+  if(!list.length){document.getElementById('news-list').innerHTML='<div class="news-loading" style="color:var(--muted)">Nenhuma notícia nesta categoria.</div>';return;}
+  document.getElementById('news-list').innerHTML=list.map(n=>{
+    var c=cc(n.category);
+    return '<div class="news-card" id="news-'+n.id+'">'
+      +'<div class="item-row">'
+      +'<div style="flex:1">'
+      +(n.important?'<span style="font-size:10px;background:#FAECE7;color:#993C1D;padding:2px 7px;border-radius:20px;font-weight:500;margin-right:6px">● Destaque</span>':'')
+      +'<span class="news-badge" style="background:'+c.bg+';color:'+c.tc+'">'+((isDark?catColorsDark[n.category]:catColors[n.category])||{label:n.category}).label+'</span>'
+      +'<div style="font-weight:500;font-size:14px;margin:8px 0 6px;line-height:1.4">'+n.title+'</div>'
+      +'<div style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:10px">'+n.summary+'</div>'
+      +'<div style="display:flex;gap:12px;font-size:11px;color:var(--faint)">'
+      +'<span>📰 '+n.source+'</span><span>📅 '+n.date+'</span>'
+      +'</div></div>'
+      +'<button class="del-btn" onclick="deleteNews('+n.id+')" title="Excluir">🗑</button>'
+      +'</div></div>';
   }).join('');
 }
+function deleteNews(id){state.news=state.news.filter(n=>n.id!==id);renderNews();}
 
 // ── NOTES ─────────────────────────────────────────────────────────
 function renderNotes(){
+  if(!state.notes.length){document.getElementById('notes-list').innerHTML='<div style="color:var(--muted);text-align:center;padding:2rem;font-size:14px">Nenhuma anotação ainda. Crie uma acima!</div>';return;}
   document.getElementById('notes-list').innerHTML=state.notes.map(n=>
-    '<div class="note-card" style="background:'+noteColors[n.color]+';border-left-color:'+noteText[n.color]+'">'
-    +'<div style="display:flex;justify-content:space-between;align-items:flex-start">'
-    +'<div><div style="font-weight:500;margin-bottom:4px;color:'+noteText[n.color]+'">'+n.title+'</div>'
-    +'<div style="font-size:13px;color:#555;white-space:pre-line">'+n.content+'</div></div>'
-    +'<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">'
-    +(n.subject?'<span class="tag" style="background:'+noteText[n.color]+'22;color:'+noteText[n.color]+'">'+n.subject+'</span>':'')
-    +'<span style="font-size:11px;color:#999">'+n.date+'</span></div></div></div>'
+    '<div class="note-card" style="background:'+nc(n.color)+';border-left-color:'+nt(n.color)+'">'
+    +'<div class="item-row">'
+    +'<div style="flex:1"><div style="font-weight:500;margin-bottom:4px;color:'+nt(n.color)+'">'+n.title+'</div>'
+    +'<div style="font-size:13px;color:var(--muted);white-space:pre-line;line-height:1.6">'+n.content+'</div>'
+    +'<div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">'
+    +(n.subject?'<span class="tag" style="background:'+nt(n.color)+'33;color:'+nt(n.color)+'">'+n.subject+'</span>':'')
+    +'<span style="font-size:11px;color:var(--faint);line-height:1.8">'+n.date+'</span>'
+    +'</div></div>'
+    +'<button class="del-btn" onclick="deleteNote('+n.id+')" title="Excluir">🗑</button>'
+    +'</div></div>'
   ).join('');
 }
 function addNote(){
   var t=document.getElementById('n-title').value.trim();
-  if(!t) return;
+  if(!t)return;
   state.notes.push({id:Date.now(),title:t,content:document.getElementById('n-content').value,subject:document.getElementById('n-subj').value,date:new Date().toISOString().slice(0,10),color:document.getElementById('n-color').value});
   ['n-title','n-content','n-subj'].forEach(i=>document.getElementById(i).value='');
   document.getElementById('note-form').style.display='none';
-  addXP(5); renderNotes();
+  addXP(5);renderNotes();
 }
+function deleteNote(id){if(confirm('Excluir esta anotação?')){state.notes=state.notes.filter(n=>n.id!==id);renderNotes();}}
 
 // ── MATERIALS ─────────────────────────────────────────────────────
 function renderMats(){
+  if(!state.materials.length){document.getElementById('mat-list').innerHTML='<div style="color:var(--muted);font-size:14px;padding:1rem">Nenhum material salvo ainda.</div>';return;}
   document.getElementById('mat-list').innerHTML=state.materials.map(m=>
-    '<div class="card"><div style="font-size:26px;margin-bottom:8px">'+(typeIcon[m.type]||'⊞')+'</div>'
-    +'<div style="font-weight:500;margin-bottom:6px">'+m.title+'</div>'
-    +'<div style="display:flex;gap:6px;margin-bottom:8px">'
-    +'<span class="tag" style="background:#E1F5EE;color:#085041">'+m.type+'</span>'
-    +(m.subject?'<span class="tag" style="background:#F1EFE8;color:#5F5E5A">'+m.subject+'</span>':'')
-    +'</div><div style="font-size:11px;color:#999">'+m.date+'</div></div>'
+    '<div class="card" style="position:relative">'
+    +'<button class="del-btn" onclick="deleteMat('+m.id+')" style="position:absolute;top:10px;right:10px" title="Excluir">🗑</button>'
+    +'<div style="font-size:24px;margin-bottom:8px">'+(typeIcon[m.type]||'📁')+'</div>'
+    +'<div style="font-weight:500;margin-bottom:6px;font-size:14px;padding-right:24px">'+m.title+'</div>'
+    +'<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">'
+    +'<span class="tag" style="background:'+nc('teal')+';color:'+nt('teal')+'">'+m.type+'</span>'
+    +(m.subject?'<span class="tag" style="background:var(--surface2);color:var(--muted)">'+m.subject+'</span>':'')
+    +'</div><div style="font-size:11px;color:var(--faint)">'+m.date+'</div></div>'
   ).join('');
 }
 function addMat(){
   var t=document.getElementById('m-title').value.trim();
-  if(!t) return;
+  if(!t)return;
   state.materials.push({id:Date.now(),title:t,type:document.getElementById('m-type').value,subject:document.getElementById('m-subj').value,url:document.getElementById('m-url').value,date:new Date().toISOString().slice(0,10)});
   ['m-title','m-subj','m-url'].forEach(i=>document.getElementById(i).value='');
   document.getElementById('mat-form').style.display='none';
   renderMats();
 }
+function deleteMat(id){if(confirm('Excluir este material?')){state.materials=state.materials.filter(m=>m.id!==id);renderMats();}}
 
 // ── QUIZ ──────────────────────────────────────────────────────────
 function renderQuizStart(){
@@ -411,49 +518,36 @@ function renderQuizStart(){
   document.getElementById('quiz-running').style.display='none';
   document.getElementById('quiz-done').style.display='none';
   var subjs=[...new Set(questions.map(q=>q.subject))];
-  document.getElementById('quiz-tags').innerHTML=subjs.map(s=>'<span class="tag" style="background:var(--purpleL);color:var(--purpleD);margin-right:6px">'+s+'</span>').join('');
+  document.getElementById('quiz-tags').innerHTML=subjs.map(s=>'<span class="tag" style="background:'+nc('purple')+';color:'+nt('purple')+';margin-right:6px;margin-bottom:6px">'+s+'</span>').join('');
 }
 function startQuiz(){
-  var shuffled=[...questions].sort(()=>Math.random()-.5);
+  var shuffled=[...questions].sort(()=>Math.random()-.5).slice(0,5);
   state.quiz={started:true,questions:shuffled,current:0,answers:[],done:false};
   document.getElementById('quiz-start').style.display='none';
   document.getElementById('quiz-running').style.display='';
   renderQuestion();
 }
 function renderQuestion(){
-  var q=state.quiz.questions[state.quiz.current];
-  var total=state.quiz.questions.length;
+  var q=state.quiz.questions[state.quiz.current],total=state.quiz.questions.length;
   document.getElementById('quiz-counter').textContent='Questão '+(state.quiz.current+1)+' de '+total+' · '+q.subject;
   document.getElementById('quiz-prog').style.width=Math.round((state.quiz.current/total)*100)+'%';
   document.getElementById('quiz-q').textContent=q.q;
-  document.getElementById('quiz-opts').innerHTML=q.options.map((o,i)=>
-    '<button class="quiz-opt" onclick="answerQ('+i+')"><span style="font-weight:500;margin-right:8px">'+['A','B','C','D'][i]+'.</span>'+o+'</button>'
-  ).join('');
+  document.getElementById('quiz-opts').innerHTML=q.options.map((o,i)=>'<button class="quiz-opt" onclick="answerQ('+i+')"><span style="font-weight:500;margin-right:8px">'+['A','B','C','D'][i]+'.</span>'+o+'</button>').join('');
 }
 function answerQ(idx){
-  var q=state.quiz.questions[state.quiz.current];
-  var correct=idx===q.answer;
-  // visual feedback
+  var q=state.quiz.questions[state.quiz.current],correct=idx===q.answer;
   var opts=document.querySelectorAll('.quiz-opt');
   opts[idx].classList.add(correct?'correct':'wrong');
-  if(!correct) opts[q.answer].classList.add('correct');
+  if(!correct)opts[q.answer].classList.add('correct');
   opts.forEach(o=>o.disabled=true);
-  if(correct) addXP(10);
+  if(correct)addXP(10);
   state.quiz.answers.push({qid:q.id,chosen:idx,correct});
-  setTimeout(()=>{
-    if(state.quiz.current+1>=state.quiz.questions.length){
-      showQuizResult();
-    } else {
-      state.quiz.current++;
-      renderQuestion();
-    }
-  },900);
+  setTimeout(()=>{if(state.quiz.current+1>=state.quiz.questions.length){showQuizResult();}else{state.quiz.current++;renderQuestion();}},900);
 }
 function showQuizResult(){
   document.getElementById('quiz-running').style.display='none';
   document.getElementById('quiz-done').style.display='';
-  var correct=state.quiz.answers.filter(a=>a.correct).length;
-  var pct=Math.round((correct/state.quiz.answers.length)*100);
+  var correct=state.quiz.answers.filter(a=>a.correct).length,pct=Math.round((correct/state.quiz.answers.length)*100);
   var col=pct>=70?'var(--green)':pct>=50?'var(--amber)':'var(--red)';
   document.getElementById('quiz-pct').style.color=col;
   document.getElementById('quiz-pct').textContent=pct+'%';
@@ -461,9 +555,8 @@ function showQuizResult(){
   document.getElementById('quiz-res-bar').style.width=pct+'%';
   document.getElementById('quiz-res-bar').style.background=col;
   document.getElementById('quiz-review').innerHTML=state.quiz.questions.map((q,i)=>{
-    var a=state.quiz.answers[i];
-    var c=a?a.correct:false;
-    return '<div class="review-item" style="background:'+(c?'var(--greenL)':'var(--redL)')+';border-color:'+(c?'var(--green)':'var(--red)')+'"><div style="font-size:13px;font-weight:500;margin-bottom:4px">'+q.q+'</div><div style="font-size:12px;color:'+(c?'var(--green)':'var(--red)')+'">'+( c?'✓ Correto':'✗ Errado')+' — Resposta: '+q.options[q.answer]+'</div></div>';
+    var a=state.quiz.answers[i],c=a?a.correct:false;
+    return '<div class="review-item" style="background:'+(c?'var(--greenL)':'var(--redL)')+';border-color:'+(c?'var(--green)':'var(--red)')+'"><div style="font-size:13px;font-weight:500;margin-bottom:4px">'+q.q+'</div><div style="font-size:12px;color:'+(c?'var(--green)':'var(--red)')+'">'+( c?'✓ Correto':'✗ Errado')+' — '+q.options[q.answer]+'</div></div>';
   }).join('');
   state.studyLog.push({date:new Date().toISOString().slice(0,10),minutes:5,subject:"Simulado"});
 }
@@ -472,15 +565,18 @@ function resetQuiz(){renderQuizStart();}
 // ── FLASHCARDS ────────────────────────────────────────────────────
 function renderFC(){
   var fcs=state.flashcards;
-  if(!fcs.length){document.getElementById('fc-card').innerHTML='<div style="color:var(--muted)">Nenhum flashcard. Crie um acima!</div>';return;}
-  var idx=state.fcIdx;
-  var fc=fcs[idx];
-  document.getElementById('fc-label').textContent='Card '+(idx+1)+' de '+fcs.length+(fc.subject?' · '+fc.subject:'');
+  if(!fcs.length){
+    document.getElementById('fc-label').textContent='Nenhum flashcard. Crie um!';
+    document.getElementById('fc-card').innerHTML='<div style="color:var(--muted)">Crie seu primeiro flashcard acima.</div>';
+    document.getElementById('fc-dots').innerHTML='';return;
+  }
+  if(state.fcIdx>=fcs.length)state.fcIdx=0;
+  var fc=fcs[state.fcIdx];
+  document.getElementById('fc-label').textContent='Card '+(state.fcIdx+1)+' de '+fcs.length+(fc.subject?' · '+fc.subject:'');
   document.getElementById('fc-side').textContent=state.fcFlipped?'RESPOSTA':'PERGUNTA';
   document.getElementById('fc-text').textContent=state.fcFlipped?fc.back:fc.front;
   document.getElementById('fc-card').className='fc-card'+(state.fcFlipped?' flipped':'');
-  var hint=document.getElementById('fc-card').querySelector('div>div:last-child');
-  document.getElementById('fc-dots').innerHTML=fcs.map((_,i)=>'<div class="fc-dot'+(i===idx?' active':'')+'" onclick="goFC('+i+')"></div>').join('');
+  document.getElementById('fc-dots').innerHTML=fcs.map((_,i)=>'<div class="fc-dot'+(i===state.fcIdx?' active':'')+'" onclick="goFC('+i+')"></div>').join('');
 }
 function flipFC(){state.fcFlipped=!state.fcFlipped;renderFC();}
 function nextFC(){state.fcIdx=(state.fcIdx+1)%state.flashcards.length;state.fcFlipped=false;renderFC();}
@@ -488,35 +584,38 @@ function prevFC(){state.fcIdx=(state.fcIdx-1+state.flashcards.length)%state.flas
 function goFC(i){state.fcIdx=i;state.fcFlipped=false;renderFC();}
 function addFC(){
   var f=document.getElementById('fc-front').value.trim();
-  if(!f) return;
+  if(!f)return;
   state.flashcards.push({front:f,back:document.getElementById('fc-back').value,subject:document.getElementById('fc-subj').value});
   ['fc-front','fc-back','fc-subj'].forEach(i=>document.getElementById(i).value='');
   document.getElementById('fc-form').style.display='none';
-  addXP(5); renderFC();
+  addXP(5);renderFC();
+}
+function deleteFC(){
+  if(!state.flashcards.length)return;
+  if(confirm('Excluir este flashcard?')){
+    state.flashcards.splice(state.fcIdx,1);
+    if(state.fcIdx>=state.flashcards.length)state.fcIdx=Math.max(0,state.flashcards.length-1);
+    state.fcFlipped=false;renderFC();
+  }
 }
 
 // ── PROGRESS ──────────────────────────────────────────────────────
 function renderProgress(){
   updateXP();
   var total=state.studyLog.reduce((a,b)=>a+b.minutes,0);
-  var lvl=Math.floor(state.xp/100)+1;
-  var inLvl=state.xp%100;
+  var lvl=Math.floor(state.xp/100)+1,inLvl=state.xp%100;
   var ps=[
-    {label:"Nível",val:lvl,ic:"▲",bg:"#EEEDFE",tc:"#3C3489"},
-    {label:"XP Total",val:state.xp,ic:"✦",bg:"#FAEEDA",tc:"#854F0B"},
-    {label:"Min estudados",val:total,ic:"◷",bg:"#E1F5EE",tc:"#085041"},
-    {label:"Anotações",val:state.notes.length,ic:"✎",bg:"#E6F1FB",tc:"#0C447C"}
+    {label:"Nível",val:lvl,ic:"▲",bg:isDark?"#2d2b5a":"#EEEDFE",tc:isDark?"#c4bfff":"#3C3489"},
+    {label:"XP Total",val:state.xp,ic:"✦",bg:isDark?"#3d2a08":"#FAEEDA",tc:isDark?"#f5c775":"#854F0B"},
+    {label:"Min estudados",val:total,ic:"◷",bg:isDark?"#0a3d2e":"#E1F5EE",tc:isDark?"#5dd4a8":"#085041"},
+    {label:"Anotações",val:state.notes.length,ic:"✎",bg:isDark?"#0d2a45":"#E6F1FB",tc:isDark?"#7bbcf0":"#0C447C"}
   ];
-  document.getElementById('prog-stats').innerHTML=ps.map(s=>
-    '<div class="stat-card" style="background:'+s.bg+'"><div class="stat-icon">'+s.ic+'</div><div class="stat-val" style="color:'+s.tc+'">'+s.val+'</div><div class="stat-lbl" style="color:'+s.tc+'">'+s.label+'</div></div>'
-  ).join('');
+  document.getElementById('prog-stats').innerHTML=ps.map(s=>'<div class="stat-card" style="background:'+s.bg+'"><div class="stat-icon">'+s.ic+'</div><div class="stat-val" style="color:'+s.tc+'">'+s.val+'</div><div class="stat-lbl" style="color:'+s.tc+'">'+s.label+'</div></div>').join('');
   document.getElementById('prog-lvl-label').textContent='Nível '+lvl;
   document.getElementById('prog-xp-label').textContent=inLvl+'/100 XP';
   document.getElementById('prog-xp-bar').style.width=inLvl+'%';
   document.getElementById('total-min').textContent=total+' min';
-  document.getElementById('prog-hist').innerHTML=state.studyLog.map((d,i)=>
-    '<div class="hist-row"><div><span style="font-size:14px;font-weight:500">'+d.subject+'</span><span style="font-size:12px;color:#999;margin-left:8px">'+d.date+'</span></div><span style="font-size:14px;font-weight:500;color:var(--purple)">'+d.minutes+' min</span></div>'
-  ).join('');
+  document.getElementById('prog-hist').innerHTML=state.studyLog.slice().reverse().map((d,i,arr)=>'<div class="hist-row"><div><span style="font-size:14px;font-weight:500">'+d.subject+'</span><span style="font-size:12px;color:var(--faint);margin-left:8px">'+d.date+'</span></div><span style="font-size:14px;font-weight:500;color:var(--purple)">'+d.minutes+' min</span></div>').join('');
 }
 
 // ── POMODORO ──────────────────────────────────────────────────────
@@ -541,38 +640,18 @@ function togglePomo(){
         state.pomo.mode=isWork?'break':'work';
         state.pomo.seconds=isWork?5*60:25*60;
         state.pomo.running=false;
-      } else {
-        state.pomo.seconds--;
-      }
+      }else{state.pomo.seconds--;}
       updatePomoUI();
     },1000);
-  } else {
-    clearInterval(state.pomoTimer);
-  }
+  }else clearInterval(state.pomoTimer);
   updatePomoUI();
 }
-function resetPomo(){
-  clearInterval(state.pomoTimer);
-  state.pomo.running=false;
-  state.pomo.seconds=state.pomo.mode==='work'?25*60:5*60;
-  updatePomoUI();
-}
-function switchPomo(){
-  clearInterval(state.pomoTimer);
-  state.pomo.running=false;
-  state.pomo.mode=state.pomo.mode==='work'?'break':'work';
-  state.pomo.seconds=state.pomo.mode==='work'?25*60:5*60;
-  updatePomoUI();
-}
+function resetPomo(){clearInterval(state.pomoTimer);state.pomo.running=false;state.pomo.seconds=state.pomo.mode==='work'?25*60:5*60;updatePomoUI();}
+function switchPomo(){clearInterval(state.pomoTimer);state.pomo.running=false;state.pomo.mode=state.pomo.mode==='work'?'break':'work';state.pomo.seconds=state.pomo.mode==='work'?25*60:5*60;updatePomoUI();}
 
 // ── INIT ──────────────────────────────────────────────────────────
-updateXP();
-renderDash();
-renderNotes();
-renderMats();
-renderFC();
-renderQuizStart();
-updatePomoUI();
+updateXP();renderDash();renderNotes();renderMats();renderFC();renderQuizStart();updatePomoUI();
+setTimeout(()=>{state.news=newsData;},100);
 </script>
 </body>
 </html>
